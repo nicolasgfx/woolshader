@@ -6,13 +6,12 @@ source code.
 | file | what | terms |
 |---|---|---|
 | `workflow-overview.png` | screenshots of the viewer's steps, by Nicolas Menzel; the object in them is based on ["Teddy bears"](https://sketchfab.com/3d-models/teddy-bears-e84b12b4ac20402aaf4d40f2219cd0e2) by hectopod ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), modified (knitting, fibres and materials added) | © 2026 Nicolas Menzel, [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/); the teddy model's own licence applies to its part |
+| `knitted-bears.jpg` | a render of the teddy bears by Nicolas Menzel, downscaled from the article's opening render; the bears are based on ["Teddy bears"](https://sketchfab.com/3d-models/teddy-bears-e84b12b4ac20402aaf4d40f2219cd0e2) by hectopod ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)), modified; the room behind them is the "Watercolor room interior scene" by Angelo Ferretti ([Lucy Dreams](https://www.lucydreams.it/shop/)), used with his written permission | not licensed for reuse: the room is third-party work under its author's permission, the teddy model's own licence applies to its part |
 | `cream-swatch-top.jpg` | a render of the wool swatch scene (the model in `scenes/wool-swatch`), by Nicolas Menzel | © 2026 Nicolas Menzel, [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) |
 
-The README also shows two images from the [article](https://nicolasgfx.github.io/woolshader/), which are not files of
-this repository and are not licensed for reuse:
+The README also shows one image from the [article](https://nicolasgfx.github.io/woolshader/), which is not a file of
+this repository and is not licensed for reuse:
 
-- The opening render of the teddy bears: the room behind them is the "Watercolor room interior scene" by Angelo
-  Ferretti (Lucy Dreams), used with his written permission; the bears are based on hectopod's "Teddy bears" (CC BY 4.0).
 - The cream swatch photograph (top view) by Kristen McDonnell of Studio Knit, reproduced unaltered with her permission.
   It remains her work.
 
