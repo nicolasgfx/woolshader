@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="788" viewBox="0 0 740 788" font-family="Helvetica, Arial, sans-serif">
+ <defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+   <path d="M 0 0 L 10 5 L 0 10 z" fill="#315778"/>
+  </marker>
+  <style>
+   .box { fill: #f5f5f2; stroke: #d7d7d4; stroke-width: 1.2; }
+   .group { fill: #eef3f7; stroke: #315778; stroke-width: 1.2; }
+   .inner { fill: #ffffff; stroke: #d7d7d4; stroke-width: 1.2; }
+   .num { fill: #315778; }
+   .numtext { fill: #ffffff; font-size: 15px; font-weight: 700; text-anchor: middle; }
+   .letter { fill: #315778; font-size: 15px; font-weight: 700; text-anchor: middle; }
+   .title { fill: #202124; font-size: 15px; font-weight: 700; }
+   .text { fill: #45464a; font-size: 13px; }
+   .flow { fill: none; stroke: #315778; stroke-width: 1.6; }
+  </style>
+ </defs>
+ <rect width="740" height="788" fill="#ffffff"/>
+
+ <!-- 1: the stitch mesh, in four parts -->
+ <rect class="group" x="50" y="20" width="640" height="322" rx="4"/>
+ <circle class="num" cx="80" cy="48" r="14"/><text class="numtext" x="80" y="53">1</text>
+ <text class="title" x="106" y="53">Create the stitch mesh</text>
+
+ <rect class="inner" x="70" y="72" width="600" height="56" rx="4"/>
+ <text class="letter" x="100" y="105">a</text>
+ <text class="title" x="126" y="95">Remesh the surface</text>
+ <text class="text" x="126" y="114">A coarse mesh of quads along one direction field, at twice the stitch width</text>
+
+ <rect class="inner" x="70" y="136" width="600" height="56" rx="4"/>
+ <text class="letter" x="100" y="169">b</text>
+ <text class="title" x="126" y="159">Label every edge</text>
+ <text class="text" x="126" y="178">Course (along a row) or wale (from one row to the next)</text>
+
+ <rect class="inner" x="70" y="200" width="600" height="56" rx="4"/>
+ <text class="letter" x="100" y="233">c</text>
+ <text class="title" x="126" y="223">Choose the knitting direction</text>
+ <text class="text" x="126" y="242">For every row of faces: which side is its top</text>
+
+ <rect class="inner" x="70" y="264" width="600" height="56" rx="4"/>
+ <text class="letter" x="100" y="297">d</text>
+ <text class="title" x="126" y="287">Subdivide into stitch faces</text>
+ <text class="text" x="126" y="306">A quad becomes 2 × 2 stitches; a triangle an increase, a decrease or a row end</text>
+ <path class="flow" d="M 370 342 V 366" marker-end="url(#arrow)"/>
+
+ <!-- 2 -->
+ <rect class="box" x="70" y="368" width="600" height="56" rx="4"/>
+ <circle class="num" cx="100" cy="396" r="14"/><text class="numtext" x="100" y="401">2</text>
+ <text class="title" x="126" y="391">Relax the stitch mesh</text>
+ <text class="text" x="126" y="410">Springs between its vertices slide them over the surface to even out the stitches</text>
+ <path class="flow" d="M 370 424 V 448" marker-end="url(#arrow)"/>
+
+ <!-- 3 -->
+ <rect class="box" x="70" y="450" width="600" height="74" rx="4"/>
+ <circle class="num" cx="100" cy="478" r="14"/><text class="numtext" x="100" y="483">3</text>
+ <text class="title" x="126" y="473">Place the loops</text>
+ <text class="text" x="126" y="492">Every face gets the yarn of its type from a template.</text>
+ <text class="text" x="126" y="509">Neighbouring faces share the points where the yarn crosses their common edge.</text>
+ <path class="flow" d="M 370 524 V 548" marker-end="url(#arrow)"/>
+
+ <!-- 4 -->
+ <rect class="box" x="70" y="550" width="600" height="74" rx="4"/>
+ <circle class="num" cx="100" cy="578" r="14"/><text class="numtext" x="100" y="583">4</text>
+ <text class="title" x="126" y="573">Relax the loop control points</text>
+ <text class="text" x="126" y="592">The yarn starts thin and grows to its diameter in stages.</text>
+ <text class="text" x="126" y="609">Goal: every segment at its rest length. Limits: bending, contact, surface.</text>
+ <path class="flow" d="M 370 624 V 648" marker-end="url(#arrow)"/>
+
+ <!-- check -->
+ <rect class="box" x="70" y="650" width="600" height="56" rx="4"/>
+ <text class="title" x="126" y="673">Check the yarn</text>
+ <text class="text" x="126" y="692">Bends and overlaps after every stage; the order of the yarn crossings in every face</text>
+ <path class="flow" d="M 370 706 V 730" marker-end="url(#arrow)"/>
+
+ <!-- result -->
+ <rect x="220" y="732" width="300" height="40" rx="20" fill="#315778"/>
+ <text x="370" y="757" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">Knitted loops, ready for the yarn tube</text>
+</svg>

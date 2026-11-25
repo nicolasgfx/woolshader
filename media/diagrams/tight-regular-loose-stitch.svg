@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="330" viewBox="0 0 740 330" font-family="Helvetica, Arial, sans-serif">
+ <defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b5482f"/></marker>
+  <style>
+   .title { fill: #202124; font-size: 15px; font-weight: 700; text-anchor: middle; }
+   .text { fill: #45464a; font-size: 13px; text-anchor: middle; }
+   .small { fill: #315778; font-size: 12px; text-anchor: middle; }
+   .rest { stroke: #315778; stroke-width: 2; stroke-dasharray: 6 4; fill: none; }
+   .guide { stroke: #d7d7d4; stroke-width: 1; }
+   .yarn { stroke: #202124; stroke-width: 5; stroke-linecap: round; fill: none; }
+   .ghost { stroke: #315778; stroke-width: 2; stroke-dasharray: 6 4; fill: none; }
+   .dot { fill: #ffffff; stroke: #202124; stroke-width: 2.5; }
+   .push { stroke: #b5482f; stroke-width: 2.2; fill: none; }
+   .card { fill: #f5f5f2; stroke: #d7d7d4; stroke-width: 1.2; }
+   .change { fill: #b5482f; font-size: 13px; font-weight: 700; text-anchor: middle; }
+  </style>
+ </defs>
+ <rect width="740" height="330" fill="#ffffff"/>
+
+ <rect class="card" x="20" y="16" width="220" height="298" rx="4"/>
+ <text class="title" x="130" y="44">Tight stitch</text>
+ <path class="ghost" d="M 96.0 222 C 126.6 222, 72.2 102.0, 130 102.0 C 187.8 102.0, 133.4 222, 164.0 222"/>
+ <path class="yarn" d="M 103.5 222 C 127.3 222, 84.9 128.4, 130 128.4 C 175.1 128.4, 132.7 222, 156.5 222"/>
+ <text class="change" x="130" y="262">1. Loop made smaller</text><text class="change" x="130" y="284">2. Rest lengths made shorter</text>
+ <rect class="card" x="260" y="16" width="220" height="298" rx="4"/>
+ <text class="title" x="370" y="44">Unchanged stitch</text>
+ <path class="yarn" d="M 336.0 222 C 366.6 222, 312.2 102.0, 370 102.0 C 427.8 102.0, 373.4 222, 404.0 222"/>
+ <text class="text" x="370" y="262">1. Loop as placed</text><text class="text" x="370" y="284">2. Rest lengths as placed</text>
+ <rect class="card" x="500" y="16" width="220" height="298" rx="4"/>
+ <text class="title" x="610" y="44">Loose stitch</text>
+ <path class="ghost" d="M 576.0 222 C 606.6 222, 552.2 102.0, 610 102.0 C 667.8 102.0, 613.4 222, 644.0 222"/>
+ <path class="yarn" d="M 568.5 222 C 605.9 222, 539.5 75.6, 610 75.6 C 680.5 75.6, 614.1 222, 651.5 222"/>
+ <text class="change" x="610" y="262">1. Loop made bigger</text><text class="change" x="610" y="284">2. Rest lengths made longer</text>
+ <text class="small" x="130" y="304">dashed: the loop as placed</text>
+</svg>

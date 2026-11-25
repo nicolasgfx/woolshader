@@ -1,0 +1,1654 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A personal study of knitted yarn geometry, plies and fine fibres, rendered with a spectral path tracer.">
+  <meta name="author" content="Nicolas Menzel">
+  <meta name="article-source-sha256" content="85125d08d760d9018b1289816285296ea9f3be6f87db6fb845a5ec2610effa04">
+  <meta name="color-scheme" content="light">
+  <title>Knitted wool: geometry and fibre rendering | Wool Shader</title>
+  <link rel="stylesheet" href="article.css">
+  <script src="article.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#article">Skip to article</a>
+  <div class="reading-progress" aria-hidden="true"></div>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="Wool Shader, back to top">Wool Shader</a>
+      <a class="source-link" href="https://github.com/nicolasgfx/woolshader">Source <span aria-hidden="true">&#8599;</span></a>
+    </header>
+    <main id="top">
+      <header class="paper-heading">
+        <p class="eyebrow">Wool Shader &#183; Technical article</p>
+        <h1>Knitted wool: geometry<br>and fibre rendering</h1><p class="subtitle">A guide to photo-realistic wool rendering</p>
+        <p class="byline">Nicolas Menzel <span aria-hidden="true">&#183;</span> November 2026</p>
+        <p class="hero-meta">C++ / CUDA <span>&#183;</span> Procedural geometry <span>&#183;</span> 59 min read</p>
+      </header>
+      <div class="reading-layout">
+        <details class="contents paper-contents"><summary>Contents</summary>
+          <nav aria-label="Article contents"><ol><li class="toc-level-2 toc-unnumbered"><a href="#quick-start">Quick Start</a></li><li class="toc-level-2"><a href="#introduction">Introduction</a></li><li class="toc-level-3"><a href="#prior-work">Prior work</a></li><li class="toc-level-3"><a href="#what-this-work-delivers">What this work delivers</a></li><li class="toc-level-2"><a href="#knitting-the-surface">Knitting the surface</a></li><li class="toc-level-3"><a href="#placing-and-relaxing-the-loops">Placing and relaxing the loops</a></li><li class="toc-level-3"><a href="#introducing-yarn-irregularities">Introducing yarn irregularities</a></li><li class="toc-level-3"><a href="#yarn-thickness">Yarn thickness</a></li><li class="toc-level-2"><a href="#making-it-look-like-wool">Making it look like wool</a></li><li class="toc-level-3"><a href="#tapered-fibres">Tapered fibres</a></li><li class="toc-level-3"><a href="#introducing-fibre-irregularities">Introducing fibre irregularities</a></li><li class="toc-level-3"><a href="#different-wool-profiles">Different Wool Profiles</a></li><li class="toc-level-3"><a href="#yarn-and-fibre-materials">Yarn and fibre materials</a></li><li class="toc-level-2"><a href="#making-it-fit-on-the-gpu">Making it fit on the GPU</a></li><li class="toc-level-3"><a href="#reducing-yarn-geometry">Reducing yarn geometry</a></li><li class="toc-level-3"><a href="#baking-the-fibres-into-the-yarn">Baking the fibres into the yarn</a></li><li class="toc-level-2"><a href="#comparing-with-a-real-photograph">Comparing with a real photograph</a></li><li class="toc-level-3"><a href="#blue-swatch">Blue swatch</a></li><li class="toc-level-3"><a href="#cream-swatch">Cream swatch</a></li><li class="toc-level-3"><a href="#the-four-renders">The four renders</a></li><li class="toc-level-2"><a href="#the-complete-workflow-explained">The complete workflow explained</a></li><li class="toc-level-3"><a href="#importing-a-file">Importing a file</a></li><li class="toc-level-3"><a href="#apply-the-knitting">Apply the Knitting</a></li><li class="toc-level-3"><a href="#create-the-fibres">Create the Fibres</a></li><li class="toc-level-3"><a href="#exporting">Exporting</a></li><li class="toc-level-3"><a href="#marking-a-piece-for-the-stitch-mesh-optional">Marking a piece for the stitch mesh (optional)</a></li><li class="toc-level-2"><a href="#limitations-cost">Limitations &amp; Cost</a></li><li class="toc-level-2"><a href="#future-improvements">Future improvements</a></li><li class="toc-level-2"><a href="#conclusion">Conclusion</a></li><li class="toc-level-2"><a href="#appendix-knitted-sweater">Appendix: Knitted sweater</a></li><li class="toc-level-2 toc-unnumbered"><a href="#image-and-video-credits">Image and Video Credits</a></li></ol></nav>
+        </details>
+        <article id="article" aria-label="Knitted wool article"><section class="article-section article-preface" id="opening" aria-label="Opening"><div class="section-body paper-opening"><p>How do we get from this...</p>
+<figure class="article-figure article-figure--single" id="paper-figure-1" data-figure-key="1" style="--aspect: 1.7778"><a href="media/teddy/original-model.png" data-enlarge data-caption="From Phong-shaded model."><img src="media/teddy/original-model.png" alt="From this: From Phong-shaded model" width="3840" height="2160" loading="lazy" decoding="async"></a><figcaption data-paper-number="1" id="figure-caption-1">From Phong-shaded model.</figcaption></figure>
+<p>...to this?</p>
+<figure class="article-figure article-figure--group article-figure--slides" id="paper-figure-2" data-figure-key="2"><div class="subfig-row"><div class="subfig" data-slide-label="Main" style="--aspect: 1.7778"><a href="media/teddy/knitted-bears-main.png" data-enlarge data-caption="(a) The teddy bears with knitted wool and fine fibres, in the Watercolor room scene by Angelo Ferretti (Lucy Dreams)."><img src="media/teddy/knitted-bears-main.png" alt="To this: the teddy bears with knitted wool and fine fibres" width="3840" height="2160" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" data-slide-label="Close-up" style="--aspect: 1.7778"><a href="media/teddy/knitted-bears-closeup.png" data-enlarge data-caption="(b) Close-up of the knitted wool and fine fibres."><img src="media/teddy/knitted-bears-closeup.png" alt="Close-up of the knitted teddy bears" width="3840" height="2160" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" data-slide-label="Total" style="--aspect: 1.7778"><a href="media/teddy/knitted-bears-total.png" data-enlarge data-caption="(c) The knitted teddy bears in a wider view."><img src="media/teddy/knitted-bears-total.png" alt="Wider view of the knitted teddy bears" width="3840" height="2160" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><figcaption data-paper-number="2" id="figure-caption-2"><span class="caption-part">(a) The teddy bears with knitted wool and fine fibres, in the Watercolor room scene by Angelo Ferretti (Lucy Dreams).</span> <span class="caption-part">(b) Close-up of the knitted wool and fine fibres.</span> <span class="caption-part">(c) The knitted teddy bears in a wider view.</span> <span class="figure-credit">Room background: Angelo Ferretti, <a href="https://www.lucydreams.it/shop/">Lucy Dreams shop</a>.</span></figcaption></figure>
+<p><strong>Wool Shader</strong> is a small open-source tool that turns ordinary 3D meshes into knitted wool: it generates the yarn, the twisted plies and the fine fibres, ready for rendering.</p>
+<div class="release-links">
+<p><a href="https://github.com/nicolasgfx/woolshader">Get Wool Shader</a> <a href="https://github.com/nicolasgfx/woolshader/releases/download/swatch-scene-2026-11/wool_swatch_white.blend">Download the Blender demo (459 MB)</a></p>
+</div></div></section><section class="article-section article-section--unnumbered article-section--band" aria-labelledby="quick-start" data-section="01"><h2 id="quick-start">Quick Start</h2><div class="section-body">
+<p>There are two ways to start: render a ready-to-use scene, or knit your own mesh.</p>
+<p><strong>Render the finished scene.</strong> <a href="https://github.com/nicolasgfx/woolshader/releases/download/swatch-scene-2026-11/wool_swatch_white.blend">Download the Blender demo</a> (<code>wool_swatch_white.blend</code>, 459 MB). It is the cream swatch scene from the end of the article ("Comparing with a real photograph"), with the yarn, all of its fibres, the needle, the lighting and the cameras. Open it in Blender 5.1 or later and render with Cycles (F12). The file contains 0.6 million fibre curves; the README text block lists the cameras.</p>
+<p><strong>Knit your own mesh.</strong> <a href="https://github.com/nicolasgfx/woolshader">Get Wool Shader</a> and build it from source. You need Windows, an NVIDIA GPU with the CUDA Toolkit, and Visual Studio 2022; the repository's README lists the details. <code>.\build.bat run</code> builds the app and starts it. Then open your own OBJ or PLY file and follow the four steps: Import, Knit, Fibres and Export. <a href="#the-complete-workflow-explained">The complete workflow explained</a> walks through them.</p>
+</div></section><section class="article-section" aria-labelledby="introduction" data-section="02"><h2 id="introduction">Introduction</h2><div class="section-body">
+<p>This project started when I saw a commercial render featuring a green sofa and a cream-coloured knitted blanket. In this rendering, individual yarns and fine fibres are visible, giving it the convincing appearance of real wool:</p>
+<figure class="article-figure article-figure--group article-figure--slides" id="paper-figure-3" data-figure-key="3"><div class="subfig-row"><div class="subfig" data-slide-label="Wool swatch" style="--aspect: 1.4252"><a href="media/swatches/cream-angled.png" data-enlarge data-caption="(a) My cream wool swatch, rendered with yarn and fine fibres generated by the Wool Shader."><img src="media/swatches/cream-angled.png" alt="Cream knitted wool swatch on a wooden needle, rendered from an angle against a blue background" width="2400" height="1684" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" data-slide-label="Pullover" style="--aspect: 0.6667"><a href="media/swatches/cream-pullover-handmade.png" data-enlarge data-caption="(b) My render: a chunky cream wool in two tones of fibre, hand-knitted, on the sweater scene."><img src="media/swatches/cream-pullover-handmade.png" alt="Close-up of my knitted pullover in chunky two-tone cream wool, rendered with my Wool Shader" width="1600" height="2400" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="3" id="figure-caption-3"><span class="caption-part">(a) My cream wool swatch, rendered with yarn and fine fibres generated by the Wool Shader.</span> <span class="caption-part">(b) My render: a chunky cream wool in two tones of fibre, hand-knitted, on the sweater scene.</span></figcaption></figure>
+<p>Rendering wool is tricky: we need to model its complex structure and capture how light interacts with its smallest components. This brings together several challenges in computer graphics:</p>
+<ul>
+<li><strong>Modelling:</strong> Individual fibres are spun into yarn, and several single-ply yarns can be twisted together to form a plied yarn. The yarn is then knitted into interlocking loops. It's a significant challenge to robustly map the interlocking loops on any surface. In addition, plies do not have a smooth surface: some fibres follow the ply's direction, while others stick out more randomly.  </li>
+<li><strong>Rendering:</strong> Wool is animal hair, and its fibres are dielectric: Light can reflect off a fibre's surface or enter it, where it may be absorbed or reflected internally before leaving again. These different paths affect the highlights. Fibre thickness, tapering (narrowing towards the tip) and how much light is absorbed or passes through significantly affect the visual plausibility.</li>
+<li><strong>GPU optimization:</strong> Tens of millions of fibre segments can take up much of a consumer GPU's memory, especially once the acceleration structures are built. I reduce that cost by baking the yarn's fibre detail into texture maps and keeping the loose fuzz as geometry.</li>
+</ul>
+<p>I decided to accept this challenge: Here is my render of a knitted swatch next to a photograph of real knitting:</p>
+<figure class="article-figure article-figure--group article-figure--slides article-figure--comparison" id="paper-figure-4" data-figure-key="4" aria-label="Render and photograph comparison"><div class="subfig-row"><div class="subfig" data-slide-label="Top view"><div class="comparison-pair"><div class="comparison-panel"><span class="comparison-label">Render</span><a href="media/swatches/blue-top.png" data-enlarge data-caption="My blue swatch on its needle, rendered from above"><img src="media/swatches/blue-top.png" alt="My blue swatch on its needle, rendered from above" width="2400" height="1684" loading="lazy" decoding="async"></a></div><div class="comparison-panel"><span class="comparison-label">Reference photograph</span><a href="media/references/studio-knit-blue-top-crop.png" data-enlarge data-caption="Blue stockinette swatch on its needle. Reference photograph: Kristen McDonnell of Studio Knit, from her Stockinette Stitch tutorial. My render is separate work; she has not endorsed or verified it."><img src="media/references/studio-knit-blue-top-crop.png" alt="Blue stockinette swatch on its needle. Reference photograph: Kristen McDonnell of Studio Knit, from her Stockinette Stitch tutorial. My render is separate work; she has not endorsed or verified it." width="1200" height="842" loading="lazy" decoding="async"></a></div></div></div></div><figcaption data-paper-number="4" id="figure-caption-4"><span class="caption-part">My blue swatch on its needle, rendered from above. Reference: Blue stockinette swatch on its needle. Reference photograph: Kristen McDonnell of Studio Knit, from her Stockinette Stitch tutorial. My render is separate work; she has not endorsed or verified it.</span></figcaption></figure>
+<p>The match is not perfect: the flattened loops on the needle and the open edges of the swatch were hard to model, and the edges still give the render away. I come back to this, with the cream swatch and the angled views, in <a href="#comparing-with-a-real-photograph">Comparing with a real photograph</a>.</p>
+<p><em>Note: I rendered my own results with my spectral path tracer. You are welcome to check out my <a href="https://github.com/nicolasgfx/Portfolio">rendering portfolio</a>.</em></p>
+<h3 id="prior-work">Prior work</h3>
+<figure class="article-table" id="paper-table-1"><figcaption data-table-number="1" id="table-caption-1">Prior work.</figcaption><table aria-labelledby="table-caption-1">
+<thead>
+<tr>
+<th>Paper</th>
+<th>Used in</th>
+<th>What I use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://www.cemyuksel.com/research/stitchmeshes/">Yuksel et al., <em>Stitch Meshes</em> (2012)</a></td>
+<td>Knitting</td>
+<td>I generate yarn curves from a stitch layout and adapt their relaxation along stitch rows.</td>
+</tr>
+<tr>
+<td><a href="https://kuiwuchn.github.io/rtfr.html">Wu and Yuksel, <em>Real-time Fiber-level Cloth Rendering</em> (2017)</a></td>
+<td>Knitting, fibres</td>
+<td>I use their evenly spaced arrangement of plies around the yarn. The optional yarn-body prototype also combines a geometric core with individual outer fibres.</td>
+</tr>
+<tr>
+<td><a href="https://www.cs.cornell.edu/projects/ctcloth/">Zhao et al., <em>Fitting Procedural Yarn Models for Realistic Cloth Rendering</em> (2016)</a></td>
+<td>Knitting, fibres</td>
+<td>I use their twisted-ply construction and yarn coordinates for loose fibres. The yarn-body prototype also varies each fibre's distance from the ply centre.</td>
+</tr>
+<tr>
+<td><a href="https://cg.cs.uni-bonn.de/publications/trunz-2024-neural">Trunz et al., <em>Neural Inverse Procedural Modeling of Knitting Yarns from Images</em> (2024)</a></td>
+<td>Fibres</td>
+<td>I build the prototype’s fibre bundles in each ply’s local frame, so the fibres follow the ply as it twists. This is optional; the main workflow uses single yarn tubes with normal maps.</td>
+</tr>
+<tr>
+<td><a href="https://textiles.cs.cmu.edu/publications/2018-autoknit/">Narayanan et al., <em>Automatic Machine Knitting of 3D Meshes</em> (2018)</a></td>
+<td>Knitting</td>
+<td>I adapt their idea of using a surface field to guide stitch rows around a body part, progressing from one end to the other.</td>
+</tr>
+<tr>
+<td><a href="https://arxiv.org/abs/2101.04560">Kapllani et al., <em>TopoKnit</em> (2021)</a></td>
+<td>Knitting</td>
+<td>I use their description of loop connections to check that each new stitch passes through its parent loop correctly.</td>
+</tr>
+</tbody>
+</table></figure>
+<h3 id="what-this-work-delivers">What this work delivers</h3>
+<p>This work brings together:</p>
+<ul>
+<li>A guided workflow that combines existing approaches to generate detailed knitted wool and export it ready for rendering. The tool is open source and released under the MIT licence.</li>
+<li>A structured look at wool from a computer graphics perspective. Understanding wool's components and their light interaction enables a systematic breakdown into solvable tasks.</li>
+<li>Practical settings for modelling and rendering different wool types are shared in this article.</li>
+<li>Rendering experiments to make the wool look convincing while staying within the limits of a consumer GPU.</li>
+</ul>
+<p>I put this together in the Wool Shader app, with four guided steps. Each step builds on the previous one:</p>
+<figure class="article-figure article-figure--single article-figure--wide" id="paper-figure-5" data-figure-key="5" style="--aspect: 3.6244"><a href="media/workflow/editor-workflow-overview.png" data-enlarge data-caption="The whole application in four steps: Import, Knitting, Fibres, Export."><img src="media/workflow/editor-workflow-overview.png" alt="The four steps of the Wool Shader: Import, Knitting, Fibres, Export" width="2432" height="671" loading="lazy" decoding="async"></a><figcaption data-paper-number="5" id="figure-caption-5">The whole application in four steps: Import, Knitting, Fibres, Export.</figcaption></figure>
+<p>To improve usability, presets provide a starting point for different wool types, without having to adjust every parameter individually. The settings are still there to fine-tune the result.</p>
+</div></section><section class="article-section" aria-labelledby="knitting-the-surface" data-section="03"><h2 id="knitting-the-surface">Knitting the surface</h2><div class="section-body">
+<p>First, a little knitting terminology. A yarn <strong>(a)</strong> consists of a single ply or several plies <strong>(b)</strong> twisted together. In multi-ply yarns, the plies follow roughly helical paths. Each ply is itself spun from small fibres <strong>(c)</strong>. The fibres are the smallest components. In wool, they are individual animal hairs.</p>
+<figure class="article-figure article-figure--single article-figure--wide" id="paper-figure-6" data-figure-key="6" style="--aspect: 2.4005"><a href="media/diagrams/yarn-ply-fibre-hierarchy.png" data-enlarge data-caption="The yarn, ply and fibre hierarchy. AI-generated schematic; not to scale."><img src="media/diagrams/yarn-ply-fibre-hierarchy.png" alt="Schematic of a three-ply yarn separating into three plies, with one ply opening into individual fibres" width="1942" height="809" loading="lazy" decoding="async"></a><figcaption data-paper-number="6" id="figure-caption-6">The yarn, ply and fibre hierarchy. AI-generated schematic; not to scale.</figcaption></figure>
+<h3 id="placing-and-relaxing-the-loops">Placing and relaxing the loops</h3>
+<p>The original Yuksel et al. approach is straightforward to describe. From a given input mesh:</p>
+<ol>
+<li>Create the <strong>stitch mesh</strong>: a remeshing process where the face shape and edge types indicate which kind of loop is used.</li>
+<li>Relax the stitch mesh.</li>
+<li>Place the loops on the relaxed stitch mesh.</li>
+<li>Relax the loop control points.</li>
+</ol>
+<p>The solver tries to bring each yarn segment closer to its <strong>rest length</strong>, the length it would have without stretching, while keeping neighbouring strands apart, limiting sharp bends and keeping the yarn close to the surface. I use these rest lengths to vary stitch tension and to introduce realistic irregularities, which are covered later in more detail.</p>
+<p>The diagram shows the whole way from the input mesh to the finished loops.</p>
+<figure class="article-figure article-figure--single" id="paper-figure-7" data-figure-key="7" style="--aspect: 0.9391"><a href="media/diagrams/knitting-pipeline.svg" data-enlarge data-caption="From the input mesh to knitted loops by stitch meshing."><img src="media/diagrams/knitting-pipeline.svg" alt="Flow diagram in four steps: create the stitch mesh (remesh the surface, label every edge, choose the knitting direction, subdivide into stitch faces), relax the stitch mesh, place the loops, relax the loop control points; then check the yarn" width="740" height="788" loading="lazy" decoding="async"></a><figcaption data-paper-number="7" id="figure-caption-7">From the input mesh to knitted loops by stitch meshing.</figcaption></figure>
+<p>I found this a real challenge to implement, and I only really covered the stockinette loop type. There's plenty of existing work for the interested reader; see <a href="#prior-work">Prior work</a>.</p>
+<p>Also note that the solver is slow and needs a lot of memory. In my tests, about 3,000 stitches in one connected piece were the most that fitted into 8 GiB of GPU memory, and only with an experimental storage option. Settling them took 12 to 24 minutes on a consumer GPU.</p>
+<figure class="article-figure article-figure--single" id="paper-figure-8" data-figure-key="8" style="--aspect: 1.7778"><video controls preload="metadata" playsinline aria-label="The teddy&#x27;s yarn during relaxation"><source src="media/teddy/yarn-relaxation.mp4" type="video/mp4"><a href="media/teddy/yarn-relaxation.mp4">Download video: The teddy&#x27;s yarn during relaxation</a></video><figcaption data-paper-number="8" id="figure-caption-8">The teddy&#x27;s yarn during relaxation.</figcaption></figure>
+<details class="article-note">
+<summary>Details: the comparison with Yuksel et al., the GPU solver and the source files</summary>
+<p><strong>What the related work does, and what I do</strong></p>
+<figure class="article-table" id="paper-table-2"><figcaption data-table-number="2" id="table-caption-2">The relaxation of Yuksel et al. (2012) compared with this project.</figcaption><table aria-labelledby="table-caption-2">
+<thead>
+<tr>
+<th>What Yuksel et al. do</th>
+<th>Do I use it?</th>
+<th>What I do, and why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stitch mesh.</strong> Every face of a mesh is one stitch, and the yarn is generated face by face.</td>
+<td>Yes</td>
+<td>I build the stitch mesh by remeshing the surface (step 1), following Wu et al. (2018): a coarse mesh of quads, its edges labelled course or wale, a knitting direction for every row, then the subdivision into stitch faces. I only cover stockinette faces, with increases, decreases and row ends.</td>
+</tr>
+<tr>
+<td><strong>Mesh relaxation.</strong> Springs between neighbouring stitches (stretch, shear and a strut along the columns) slide the stitches over the surface until the forces balance.</td>
+<td>Yes</td>
+<td>The same springs, with the paper's stiffness values, move the vertices over the input surface (step 2). Their rest lengths come from my stitch width and height.</td>
+</tr>
+<tr>
+<td><strong>Yarn relaxation as a physical simulation.</strong> The yarn is an elastic rod with mass, damping and contact forces, moved forward in time steps.</td>
+<td>No</td>
+<td>An optimisation that adjusts the yarn towards its target lengths while limiting bending, contact and movement away from the surface.</td>
+</tr>
+<tr>
+<td><strong>A rest length for every loop:</strong> the amount of yarn the loop would like to hold.</td>
+<td>Yes</td>
+<td>One rest length for every yarn segment. This is the handle that the irregularities use later.</td>
+</tr>
+<tr>
+<td><strong>Contact as a soft force.</strong> Two yarns push each other apart, but they may press into each other.</td>
+<td>No</td>
+<td>A hard minimum-distance constraint between sampled yarn segments. The final yarn and tube geometry are checked again after relaxation.</td>
+</tr>
+<tr>
+<td><strong>No pull-through.</strong> A yarn must not pass through another one while it moves. They limit how far a point may move per step and test for intersections.</td>
+<td>Yes, in my own way</td>
+<td>For candidate pairs of sampled yarn segments, I check the motion throughout each proposed step. A step that would create a new crossing is shortened or rejected. The check after the relaxation then tests the order of the yarn crossings in every face again.</td>
+</tr>
+<tr>
+<td><strong>Keeping the overall shape</strong> of the garment.</td>
+<td>Yes</td>
+<td>A weak pull keeps every control point near the place where it was at the start of each solver stage.</td>
+</tr>
+</tbody>
+</table></figure>
+</details>
+<h3 id="introducing-yarn-irregularities">Introducing yarn irregularities</h3>
+<p>Generated knitting looks too uniform and perfect: that's because every stitch has the same shape and the resulting surface is too smooth and even. </p>
+<p>Real hand knitting is uneven in many small ways: some stitches are tighter than others, columns of stitches drift up and down, single loops stand out and the yarn itself is thicker in some places.</p>
+<p>That means for plausibility, we must introduce irregularities that also a real person would do during the real knitting process: So it's basically about introducing small errors and deviations.</p>
+<p>The solver from the last section makes this possible by manipulating the <strong>rest lengths</strong> it tries to optimize for: following this approach, the solver stays the same, but its input is slightly altered with random values based on a fixed seed (to allow for reproducing the same results).</p>
+<p>These irregularities are applied in the Knit step's default route, which tiles the surface with knitting charts. The stitch-mesh route above does not apply them.</p>
+<p><strong>What goes into the solver, and what the irregularities change</strong></p>
+<figure class="article-table" id="paper-table-3"><figcaption data-table-number="3" id="table-caption-3">The inputs of the solver, and the ones the irregularities alter.</figcaption><table aria-labelledby="table-caption-3">
+<thead>
+<tr>
+<th>Solver input</th>
+<th>Regular knit</th>
+<th>With irregularities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Positions of the control points at the start</td>
+<td>As placed: every loop is the same</td>
+<td><strong>Changed.</strong> Every loop is made a little smaller or bigger, leaned, lifted or shifted</td>
+</tr>
+<tr>
+<td>Rest length of every segment</td>
+<td>The length the segment was placed with</td>
+<td><strong>Changed.</strong> Shorter in a tight stitch, longer in a loose one</td>
+</tr>
+<tr>
+<td>Which stitches may move</td>
+<td>The ones that failed the check, plus their neighbours</td>
+<td><strong>Changed.</strong> All of them</td>
+</tr>
+<tr>
+<td>The three limits: bending, contact, surface</td>
+<td></td>
+<td>Unchanged</td>
+</tr>
+<tr>
+<td>The solver itself</td>
+<td></td>
+<td>Unchanged</td>
+</tr>
+</tbody>
+</table></figure>
+<p>The important input is the rest length. If I only changed the shape of a loop, the solver would pull it back wherever it moves the yarn: every segment would still want the length it was placed with. So I change both, the loop and the rest lengths of its segments. Now each stitch pulls towards its own lengths, and the unevenness survives the relaxation.</p>
+<p>The picture shows the two main changes on a single stitch:</p>
+<figure class="article-figure article-figure--single" id="paper-figure-9" data-figure-key="9" style="--aspect: 2.2424"><a href="media/diagrams/tight-regular-loose-stitch.svg" data-enlarge data-caption="A tight, an unchanged and a loose stitch. Both the loop and its rest lengths change."><img src="media/diagrams/tight-regular-loose-stitch.svg" alt="Three stitches side by side: a tight stitch with a smaller loop and shorter rest lengths, an unchanged stitch, and a loose stitch with a bigger loop and longer rest lengths" width="740" height="330" loading="lazy" decoding="async"></a><figcaption data-paper-number="9" id="figure-caption-9">A tight, an unchanged and a loose stitch. Both the loop and its rest lengths change.</figcaption></figure>
+<p><strong>The parameters</strong></p>
+<p>Each parameter is one kind of unevenness. The four presets set them all at once:</p>
+<details class="article-table article-table--collapsible" id="paper-table-4"><summary data-table-number="4" id="table-caption-4">The irregularity parameters and their values in the four presets.</summary><table aria-labelledby="table-caption-4">
+<thead>
+<tr>
+<th>Parameter</th>
+<th>What it does</th>
+<th>What it changes</th>
+<th>Off</th>
+<th>Natural</th>
+<th>Hand-made</th>
+<th>Rustic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uneven stitches</td>
+<td>How much tighter or looser a stitch may be. Every plain stitch also leans a little. A tight stitch is drawn a little thinner, a loose one thicker.</td>
+<td>Positions, drawn thickness, rest lengths</td>
+<td>0&nbsp;%</td>
+<td>10&nbsp;%</td>
+<td>20&nbsp;%</td>
+<td>32&nbsp;%</td>
+</tr>
+<tr>
+<td>Column shift</td>
+<td>In UV-chart layouts, neighbouring columns of stitches sit a little higher or lower.</td>
+<td>Positions</td>
+<td>0&nbsp;mm</td>
+<td>0.35&nbsp;mm</td>
+<td>0.6&nbsp;mm</td>
+<td>1.0&nbsp;mm</td>
+</tr>
+<tr>
+<td>Column run</td>
+<td>How many rows a column keeps about the same shift.</td>
+<td>Positions</td>
+<td>6&nbsp;rows</td>
+<td>8&nbsp;rows</td>
+<td>6&nbsp;rows</td>
+<td>5&nbsp;rows</td>
+</tr>
+<tr>
+<td>Raised loops</td>
+<td>A few stitches get at least 15 % more yarn and stand out of the surface.</td>
+<td>Positions, drawn thickness, rest lengths</td>
+<td>0&nbsp;/&nbsp;cm²</td>
+<td>0.1&nbsp;/&nbsp;cm²</td>
+<td>0.3&nbsp;/&nbsp;cm²</td>
+<td>0.7&nbsp;/&nbsp;cm²</td>
+</tr>
+<tr>
+<td>Loop height</td>
+<td>How far the tallest raised loop is lifted. Each one is lifted between half and all of this.</td>
+<td>Positions</td>
+<td>0&nbsp;mm</td>
+<td>0.5&nbsp;mm</td>
+<td>0.8&nbsp;mm</td>
+<td>1.1&nbsp;mm</td>
+</tr>
+<tr>
+<td>Fabric wave</td>
+<td>A slow rise and fall of the whole fabric.</td>
+<td>Positions</td>
+<td>0&nbsp;mm</td>
+<td>0.12&nbsp;mm</td>
+<td>0.25&nbsp;mm</td>
+<td>0.4&nbsp;mm</td>
+</tr>
+<tr>
+<td>Thick and thin spots</td>
+<td>The yarn is drawn thicker or thinner over a short stretch. A thick spot is also slack, a thin one stretched.</td>
+<td>Positions, drawn thickness, rest lengths</td>
+<td>0&nbsp;/&nbsp;cm²</td>
+<td>0.15&nbsp;/&nbsp;cm²</td>
+<td>0.4&nbsp;/&nbsp;cm²</td>
+<td>0.8&nbsp;/&nbsp;cm²</td>
+</tr>
+<tr>
+<td>Spot strength</td>
+<td>How much thicker or thinner the strongest spot is. Each one gets between half and all of this.</td>
+<td>Positions, drawn thickness, rest lengths</td>
+<td>0&nbsp;%</td>
+<td>15&nbsp;%</td>
+<td>25&nbsp;%</td>
+<td>40&nbsp;%</td>
+</tr>
+<tr>
+<td>Spot length</td>
+<td>How long a spot is along the yarn.</td>
+<td>Drawn thickness</td>
+<td>12&nbsp;mm</td>
+<td>10&nbsp;mm</td>
+<td>14&nbsp;mm</td>
+<td>16&nbsp;mm</td>
+</tr>
+</tbody>
+</table></details>
+<p>The rest lengths are measured on the loop after it has been leaned, lifted, waved and shifted, so these moves survive the solver too. Uneven stitches, raised loops and spots then make the rest lengths shorter or longer. The drawn thickness stays between 0.5 and 1.5 times the yarn's radius, and separate ply tubes are always drawn round.</p>
+<p>The comparison between regular and hand-made knitting shows how much these irregularities affect perceived realism. I deliberately say 'perceived' because realism also depends on our experience of real things and what we expect them to look like. The unevenness feels 'familiar': it matches the wool we have seen and touched. Physical accuracy matters, but it is only part of what makes a material look convincing.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-10" data-figure-key="10"><div class="subfig subfig--lead" style="--aspect: 5.5076"><a href="media/patches/irregularity-presets-top.png" data-enlarge data-caption="The irregularity presets Off, Natural, Hand-made and Rustic on the same patch, seen from above."><img src="media/patches/irregularity-presets-top.png" alt="The hand-knit presets on a flat patch, seen from above" width="6174" height="1121" loading="lazy" decoding="async"></a></div><div class="subfig-strip"><span class="strip-label" aria-hidden="true">Single renders</span><div class="subfig" style="--aspect: 1.5000"><a href="media/patches/irregularity-natural-close.png" data-enlarge data-caption="(a) Natural, close-up."><img src="media/patches/irregularity-natural-close.png" alt="Close-up of the patch with the Natural irregularities" width="1536" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.5000"><a href="media/patches/irregularity-handmade-close.png" data-enlarge data-caption="(b) Hand-made, close-up."><img src="media/patches/irregularity-handmade-close.png" alt="Close-up of the patch with the Hand-made irregularities" width="1536" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.5000"><a href="media/patches/irregularity-rustic-close.png" data-enlarge data-caption="(c) Rustic, close-up."><img src="media/patches/irregularity-rustic-close.png" alt="Close-up of the patch with the Rustic irregularities" width="1536" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><figcaption data-paper-number="10" id="figure-caption-10">The irregularity presets Off, Natural, Hand-made and Rustic on the same patch, seen from above. Single renders: <span class="caption-part">(a) Natural, close-up.</span> <span class="caption-part">(b) Hand-made, close-up.</span> <span class="caption-part">(c) Rustic, close-up.</span></figcaption></figure>
+<details class="settings">
+<summary>Settings used for these renders</summary>
+<table>
+<thead>
+<tr>
+<th>UI setting</th>
+<th>Off</th>
+<th>Natural</th>
+<th>Hand-made</th>
+<th>Rustic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Knit step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Gauge preset</td>
+<td>Dense</td>
+<td>Dense</td>
+<td>Dense</td>
+<td>Dense</td>
+</tr>
+<tr>
+<td>Yarn geometry: Construction</td>
+<td>Single tube</td>
+<td>Single tube</td>
+<td>Single tube</td>
+<td>Single tube</td>
+</tr>
+<tr>
+<td>Appearance: Ply texture</td>
+<td>3 plies</td>
+<td>3 plies</td>
+<td>3 plies</td>
+<td>3 plies</td>
+</tr>
+<tr>
+<td>Hand-made preset</td>
+<td>Off</td>
+<td>Natural</td>
+<td>Hand-made</td>
+<td>Rustic</td>
+</tr>
+<tr>
+<td>Uneven stitches</td>
+<td>0 %</td>
+<td>10 %</td>
+<td>20 %</td>
+<td>32 %</td>
+</tr>
+<tr>
+<td>Column shift</td>
+<td>0.00 mm</td>
+<td>0.35 mm</td>
+<td>0.60 mm</td>
+<td>1.00 mm</td>
+</tr>
+<tr>
+<td>Column run</td>
+<td>6 rows</td>
+<td>8 rows</td>
+<td>6 rows</td>
+<td>5 rows</td>
+</tr>
+<tr>
+<td>Raised loops</td>
+<td>0.00 / cm²</td>
+<td>0.10 / cm²</td>
+<td>0.30 / cm²</td>
+<td>0.70 / cm²</td>
+</tr>
+<tr>
+<td>Loop height</td>
+<td>0.00 mm</td>
+<td>0.50 mm</td>
+<td>0.80 mm</td>
+<td>1.10 mm</td>
+</tr>
+<tr>
+<td>Thick and thin spots</td>
+<td>0.00 / cm²</td>
+<td>0.15 / cm²</td>
+<td>0.40 / cm²</td>
+<td>0.80 / cm²</td>
+</tr>
+<tr>
+<td>Spot strength</td>
+<td>0 %</td>
+<td>15 %</td>
+<td>25 %</td>
+<td>40 %</td>
+</tr>
+<tr>
+<td>Spot length</td>
+<td>12 mm</td>
+<td>10 mm</td>
+<td>14 mm</td>
+<td>16 mm</td>
+</tr>
+<tr>
+<td>Fabric wave</td>
+<td>0.00 mm</td>
+<td>0.12 mm</td>
+<td>0.25 mm</td>
+<td>0.40 mm</td>
+</tr>
+<tr>
+<td>Solve quality</td>
+<td>Draft + settling</td>
+<td>Draft + settling</td>
+<td>Draft + settling</td>
+<td>Draft + settling</td>
+</tr>
+<tr>
+<td>Yarn tessellation</td>
+<td>Custom: 16 sides, 0.20 mm rings</td>
+<td>Custom: 16 sides, 0.20 mm rings</td>
+<td>Custom: 16 sides, 0.20 mm rings</td>
+<td>Custom: 16 sides, 0.20 mm rings</td>
+</tr>
+</tbody>
+</table>
+<p><em>Settings as the knit_viewer shows them; every value not listed is the viewer's opening default. Render: 1536 × 1024, 500 spp, OptiX denoiser; patch_lab's studio (key and fill quad lights, sky 0.08); top view, close-ups a 22 mm field.</em></p>
+</details>
+<h3 id="yarn-thickness">Yarn thickness</h3>
+<p>My first results with single yarn were disappointing because I could see straight through the gaps between the yarns. Keeping the original mesh underneath to fill those gaps helped, but introduced another problem: its colour had to match the yarn perfectly. So I abandoned that idea.</p>
+<p>I then tried increasing the yarn diameter and discovered how much difference a small change in thickness could make. With the stitch spacing unchanged, thicker yarns fill more of the gaps and give the knitted surface a denser appearance. I added three presets — thin, medium and dense — for user convenience.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-11" data-figure-key="11"><div class="subfig subfig--lead" style="--aspect: 2.8352"><a href="media/yarn/thickness-comparison.png" data-enlarge data-caption="At the same stitch spacing, increasing the yarn diameter from 1.16 to 1.86 mm closes the visible gaps in this view."><img src="media/yarn/thickness-comparison.png" alt="Thin, Medium and Dense yarn thicknesses at fixed stitch spacing" width="3096" height="1092" loading="lazy" decoding="async"></a></div><div class="subfig-strip"><span class="strip-label" aria-hidden="true">Single renders</span><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/thickness-thin.png" data-enlarge data-caption="(a) Thin, 1.16 mm."><img src="media/yarn/thickness-thin.png" alt="The teddy&#x27;s face in Thin yarn, 1.16 mm" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/thickness-medium.png" data-enlarge data-caption="(b) Medium, 1.50 mm."><img src="media/yarn/thickness-medium.png" alt="The teddy&#x27;s face in Medium yarn, 1.50 mm" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/thickness-dense.png" data-enlarge data-caption="(c) Dense, 1.86 mm."><img src="media/yarn/thickness-dense.png" alt="The teddy&#x27;s face in Dense yarn, 1.86 mm" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><figcaption data-paper-number="11" id="figure-caption-11">At the same stitch spacing, increasing the yarn diameter from 1.16 to 1.86 mm closes the visible gaps in this view. Single renders: <span class="caption-part">(a) Thin, 1.16 mm.</span> <span class="caption-part">(b) Medium, 1.50 mm.</span> <span class="caption-part">(c) Dense, 1.86 mm.</span></figcaption></figure>
+<details class="settings">
+<summary>Settings used for these renders</summary>
+<table>
+<thead>
+<tr>
+<th>UI setting</th>
+<th>Thin</th>
+<th>Medium</th>
+<th>Dense</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Knit step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Gauge preset</td>
+<td>Thin</td>
+<td>Medium</td>
+<td>Dense</td>
+</tr>
+<tr>
+<td>Yarn diameter</td>
+<td>1.16 mm</td>
+<td>1.50 mm</td>
+<td>1.86 mm</td>
+</tr>
+<tr>
+<td>Yarn geometry: Construction</td>
+<td>Single tube</td>
+<td>Single tube</td>
+<td>Single tube</td>
+</tr>
+<tr>
+<td>Appearance: Ply texture</td>
+<td>Off</td>
+<td>Off</td>
+<td>Off</td>
+</tr>
+<tr>
+<td>Hand-made preset</td>
+<td>Hand-made</td>
+<td>Hand-made</td>
+<td>Hand-made</td>
+</tr>
+<tr>
+<td>Solve quality</td>
+<td>Final</td>
+<td>Final</td>
+<td>Final</td>
+</tr>
+<tr>
+<td>Yarn tessellation</td>
+<td>Fine</td>
+<td>Fine</td>
+<td>Fine</td>
+</tr>
+<tr>
+<td><strong>Fibres step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wool preset</td>
+<td>Soft wool</td>
+<td>Soft wool</td>
+<td>Soft wool</td>
+</tr>
+<tr>
+<td>Density preset</td>
+<td>Custom</td>
+<td>Custom</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>Density</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+</tr>
+<tr>
+<td>Island preset</td>
+<td>Natural</td>
+<td>Natural</td>
+<td>Natural</td>
+</tr>
+<tr>
+<td><strong>Export step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Include fibres</td>
+<td>off</td>
+<td>off</td>
+<td>off</td>
+</tr>
+</tbody>
+</table>
+<p><em>Settings as the knit_viewer shows them; every value not listed is the viewer's opening default. Render: 1024 × 1024, 500 spp, OptiX denoiser; photon_path_tracer with the watercolor scene's sky HDRI (intensity 0.5, sun from the left), only the white bear's head and muzzle.</em></p>
+</details>
+</div></section><section class="article-section" aria-labelledby="making-it-look-like-wool" data-section="04"><h2 id="making-it-look-like-wool">Making it look like wool</h2><div class="section-body">
+<p>The first rendered knitted results left me unimpressed. Even with geometric plies, the yarn still looked like a collection of smooth tubes. </p>
+<p>It was clear that this was not an issue of an incorrect material choise: something else was missing...</p>
+<p>Looking more closely at the original commercial render, I noticed how much the fine fibres contributed. Some were coloured, others almost transparent. They caught highlights and cast tiny shadows on each other.</p>
+<p>It became clear that what makes wool so convincing are the tiny fibres sticking out of its surface. Together they create the familiar fuzzy appearance. The catch is that for close-ups, hundreds of thousands or even millions may be needed.</p>
+<p>I decided to model fibres in two ways:</p>
+<ol>
+<li><strong>Oriented fibres</strong> that roughly follow the yarn's direction</li>
+<li><strong>Stray fibres</strong> that stick out in more random directions</li>
+</ol>
+<p>In the simplest setup, each fibre has a position, direction, length, thickness and curvature. A fibre is modelled as connected line segments. The user can control how many fibres are generated, and the balance between oriented and stray fibres. To keep the geometry manageable, unsuitable placements (spawning positions) are rejected and thus limit the total number of segments.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-12" data-figure-key="12"><div class="subfig-row"><div class="subfig" style="--aspect: 1.6000"><a href="media/fibres/yarn-fuzz-closeup.png" data-enlarge data-caption="Fine fibres emerging from the surface of a yarn."><img src="media/fibres/yarn-fuzz-closeup.png" alt="Fine fibres emerging from the surface of a yarn" width="1600" height="1000" loading="lazy" decoding="async"></a></div><div class="subfig" style="--aspect: 1.6000"><a href="media/fibres/oriented-and-stray-populations.png" data-enlarge data-caption="Oriented fibres in orange and stray fibres in blue."><img src="media/fibres/oriented-and-stray-populations.png" alt="Oriented fibres in orange and stray fibres in blue" width="1600" height="1000" loading="lazy" decoding="async"></a></div></div><figcaption data-paper-number="12" id="figure-caption-12">Rendered fibre materials (left); diagnostic colours identifying oriented fibres in orange and stray fibres in blue (right).</figcaption></figure>
+<p>Small changes to the fibres can make wool look softer, fluffier or coarser. Density controls the amount of fuzz, while length, thickness, curvature and the balance between oriented and stray fibres change its character.</p>
+<figure class="article-figure article-figure--single article-figure--wide" id="paper-figure-13" data-figure-key="13" style="--aspect: 4.3699"><a href="media/fibres/density-presets.png" data-enlarge data-caption="The three fibre density presets: Light, Medium and Dense."><img src="media/fibres/density-presets.png" alt="Close-up comparison of the Light, Medium and Dense fibre density presets" width="3225" height="738" loading="lazy" decoding="async"></a><figcaption data-paper-number="13" id="figure-caption-13">The three fibre density presets: Light, Medium and Dense.</figcaption></figure>
+<p>Ideally, the generated fibres would not intersect each other or the yarn. However, millions of intersection tests turned out to be too expensive to compute, so I had to drop the idea of intersection checks.</p>
+<p>The default path still cuts or rejects fibres that penetrate the yarn too deeply or pass behind the fabric, but it does not prevent every intersection. Small remaining intersections are rarely noticeable in renders.</p>
+<p>Obviously, fibres also start by growing <strong>outwards</strong> from their local yarn surface rather than directly into it.</p>
+<h3 id="tapered-fibres">Tapered fibres</h3>
+<p>In my first teddy renders, the fibres looked like wire because they stayed thick right to the end. I make them thinner towards their tips to avoid this. This section explains how I do that.</p>
+<p>Tapering is used by Soft, Fluffy and Hard wool. The fibre keeps its thickness for most of its length, then gets thinner over the last 20% along a smooth cosine curve. The taper covers at least eight times the root diameter, unless the visible fibre is shorter.</p>
+<p>For Soft wool, the tip radius is 30% of the root radius. Fluffy and Hard wool use 10%. The renderer's linear factor is switched off for these fibres, so nothing is tapered twice. Because a late-tapered fibre keeps its thickness for longer, it covers more of the image than a whole-fibre-tapered one of the same root thickness. The tapered profiles therefore use thinner fibres, chosen so that each profile covers about the same area as before.</p>
+<figure class="article-figure article-figure--single" id="paper-figure-14" data-figure-key="14" style="--aspect: 1.1324"><a href="media/diagrams/fibre-taper.svg" data-enlarge data-caption="Top: the radius along one fibre for both tapers. Below: how the fibre is built from segments, drawn with the radius enlarged 18 times."><img src="media/diagrams/fibre-taper.svg" alt="The radius along one fibre, and the three ways it is drawn" width="676" height="597" loading="lazy" decoding="async"></a><figcaption data-paper-number="14" id="figure-caption-14">Top: the radius along one fibre for both tapers. Below: how the fibre is built from segments, drawn with the radius enlarged 18 times.</figcaption></figure>
+<p>What a taper changes is easiest to see where single fibres stand out against the sky. The two renders below show the same 5 mm view of the white teddy's muzzle. In the first, every fibre keeps its own root thickness to its end. In the second, the fibres get thinner near their tips. Only their radii differ: fibre positions, root thicknesses, materials, lighting and sampling are identical, and the renderer's own taper is switched off in both.</p>
+<p>I used a stronger taper here to make the difference visible: a cosine taper over the last 40% of the visible length, down to 12% of the root radius, with the same minimum length of eight root diameters. This is an illustration, not a wool preset. Soft wool uses a gentler taper: 20% and a 30% tip radius.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-15" data-figure-key="15"><div class="subfig-row"><div class="subfig" style="--aspect: 1.0000"><a href="media/teddy/muzzle-fibres-untapered.png" data-enlarge data-caption="(a) Untapered: every fibre keeps its own root thickness to its end."><img src="media/teddy/muzzle-fibres-untapered.png" alt="Fibres at the edge of the white teddy&#x27;s muzzle, untapered: each keeps its root thickness to a blunt end" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/teddy/muzzle-fibres-tapered.png" data-enlarge data-caption="(b) The same fibres with a cosine taper over the last 40% of the visible length to a tip of 0.12 of the root radius."><img src="media/teddy/muzzle-fibres-tapered.png" alt="The same fibres with an illustrative late taper (last 40%, tip 0.12, cosine): each thins out to a fine point" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="15" id="figure-caption-15"><span class="caption-part">(a) Untapered: every fibre keeps its own root thickness to its end.</span> <span class="caption-part">(b) The same fibres with a cosine taper over the last 40% of the visible length to a tip of 0.12 of the root radius.</span></figcaption></figure>
+<h3 id="introducing-fibre-irregularities">Introducing fibre irregularities</h3>
+<p>Uniform fibre placement has the same problem as the initial knitting results: it is too even. Every millimetre of yarn carries the same amount of the same fibres. Real wool is fuzzier in some places, pressed flat in others, and rubbed thin where it is handled a lot.</p>
+<p><em>Fibre islands</em> add this, and the idea is the same as for the knitting: the fibre generator stays the same; I only change what I feed it. An island is a patch of the fabric that changes how the fibres are generated. Fuzzy and matted islands change the fibres themselves: their length, how many are strays and how flat they lie. Worn islands reduce how many fibres are kept.</p>
+<p>This is what fibre islands look like. The ear is lit from behind, because fuzz shows best in silhouette. The knit, the light and the camera are the same in all seven renders; only the fibres differ.</p>
+<p>The first three renders show the presets described below, from the faintest to the strongest. Natural is meant to be faint. With Worn, the strays stand long and loose in one patch, while the rest of the rim keeps its short fuzz. Well-loved raises a larger patch and thins the fuzz elsewhere.</p>
+<p>The fourth render is the even fuzz without islands, for comparison. The last three show what is inside an island. For each kind, I covered the whole ear with islands of that kind alone, at full strength.</p>
+<figure class="article-figure article-figure--group article-figure--slides" id="paper-figure-16" data-figure-key="16"><div class="subfig-row"><div class="subfig" data-slide-label="Natural" style="--aspect: 2.5000"><a href="media/fibres/island-presets-ear-natural.png" data-enlarge data-caption="(a) Natural: a few faint, mostly fuzzy islands; at 40 % strength they barely show."><img src="media/fibres/island-presets-ear-natural.png" alt="Backlit teddy ear rim with the Natural islands: almost the same as the even fuzz" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" data-slide-label="Worn" style="--aspect: 2.5000"><a href="media/fibres/island-presets-ear-worn.png" data-enlarge data-caption="(b) Worn: 0.15 islands per cm², 14 mm, 70 %, fuzzy : matted : worn 1 : 2 : 1."><img src="media/fibres/island-presets-ear-worn.png" alt="Backlit teddy ear rim with the Worn islands: a patch of raised strays at the top" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" data-slide-label="Well-loved" style="--aspect: 2.5000"><a href="media/fibres/island-presets-ear-well-loved.png" data-enlarge data-caption="(c) Well-loved: 0.3 islands per cm², 18 mm, 100 %, fuzzy : matted : worn 1 : 1 : 2; about a fifth of the oriented fibres are gone."><img src="media/fibres/island-presets-ear-well-loved.png" alt="Backlit teddy ear rim with the Well-loved islands: a large patch of raised strays and thinner fuzz elsewhere" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div><div class="subfig" data-slide-label="Even" style="--aspect: 2.5000"><a href="media/fibres/island-kinds-ear-even.png" data-enlarge data-caption="(d) Even fuzz, no islands: 42,303 oriented fibres and 7,989 strays, median length 2.8 mm."><img src="media/fibres/island-kinds-ear-even.png" alt="Backlit teddy ear rim with the even fuzz: a moderate halo of fibres and strays" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(d)</span></div></div><div class="subfig-row"><div class="subfig" data-slide-label="Fuzzy only" style="--aspect: 2.5000"><a href="media/fibres/island-kinds-ear-fuzzy.png" data-enlarge data-caption="(e) Fuzzy: most fibres become strays, with a median length of about 5 mm and the longest near 10 mm."><img src="media/fibres/island-kinds-ear-fuzzy.png" alt="Backlit teddy ear rim covered by fuzzy islands: a tall halo of long strays" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(e)</span></div><div class="subfig" data-slide-label="Matted only" style="--aspect: 2.5000"><a href="media/fibres/island-kinds-ear-matted.png" data-enlarge data-caption="(f) Matted: almost every fibre is a short stray (median 2.2 mm) lying close to the yarn."><img src="media/fibres/island-kinds-ear-matted.png" alt="Backlit teddy ear rim covered by matted islands: a short, dense fringe close to the yarn" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(f)</span></div><div class="subfig" data-slide-label="Worn only" style="--aspect: 2.5000"><a href="media/fibres/island-kinds-ear-worn.png" data-enlarge data-caption="(g) Worn: about one fibre in eight is kept, where the overlapping island edges fall below full strength."><img src="media/fibres/island-kinds-ear-worn.png" alt="Backlit teddy ear rim covered by worn islands: an almost bare rim with a few fibres left" width="1600" height="640" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(g)</span></div></div><figcaption data-paper-number="16" id="figure-caption-16"><span class="caption-part">(a) Natural: a few faint, mostly fuzzy islands; at 40 % strength they barely show.</span> <span class="caption-part">(b) Worn: 0.15 islands per cm², 14 mm, 70 %, fuzzy : matted : worn 1 : 2 : 1.</span> <span class="caption-part">(c) Well-loved: 0.3 islands per cm², 18 mm, 100 %, fuzzy : matted : worn 1 : 1 : 2; about a fifth of the oriented fibres are gone.</span> <span class="caption-part">(d) Even fuzz, no islands: 42,303 oriented fibres and 7,989 strays, median length 2.8 mm.</span> <span class="caption-part">(e) Fuzzy: most fibres become strays, with a median length of about 5 mm and the longest near 10 mm.</span> <span class="caption-part">(f) Matted: almost every fibre is a short stray (median 2.2 mm) lying close to the yarn.</span> <span class="caption-part">(g) Worn: about one fibre in eight is kept, where the overlapping island edges fall below full strength.</span></figcaption></figure>
+<p><strong>What goes into the fibre generator, and what an island changes</strong></p>
+<figure class="article-table" id="paper-table-5"><figcaption data-table-number="5" id="table-caption-5">The inputs of the fibre generator, and the ones an island alters.</figcaption><table aria-labelledby="table-caption-5">
+<thead>
+<tr>
+<th>Generator input</th>
+<th>Even fuzz</th>
+<th>Inside an island</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How many fibres are kept</td>
+<td>The density setting</td>
+<td><strong>Changed</strong> in a worn island: fewer</td>
+</tr>
+<tr>
+<td>Share of stray fibres</td>
+<td>The wool profile's</td>
+<td><strong>Changed</strong> in a fuzzy or matted island: more</td>
+</tr>
+<tr>
+<td>Fibre length</td>
+<td>The wool profile's</td>
+<td><strong>Changed.</strong> Longer in a fuzzy island, shorter in a matted one</td>
+</tr>
+<tr>
+<td>How far a stray stands off the yarn</td>
+<td>The wool profile's</td>
+<td><strong>Changed</strong> in a matted island: flatter</td>
+</tr>
+<tr>
+<td>The yarn, the checks and the generator itself</td>
+<td></td>
+<td>Unchanged</td>
+</tr>
+</tbody>
+</table></figure>
+<p>There are three kinds of island:</p>
+<figure class="article-table" id="paper-table-6"><figcaption data-table-number="6" id="table-caption-6">Introducing fibre irregularities.</figcaption><table aria-labelledby="table-caption-6">
+<thead>
+<tr>
+<th>Kind</th>
+<th>What it looks like</th>
+<th>What it changes at its centre, at full strength</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fuzzy</td>
+<td>A fluffier patch</td>
+<td>Fibres up to 2.5 times as long; 35&nbsp;% of the otherwise oriented fibres become strays</td>
+</tr>
+<tr>
+<td>Matted</td>
+<td>A patch pressed flat</td>
+<td>Every fibre is a stray that lies 60&nbsp;% flatter and is 30&nbsp;% shorter</td>
+</tr>
+<tr>
+<td>Worn</td>
+<td>A bald patch where the yarn shows</td>
+<td>No fibres are kept</td>
+</tr>
+</tbody>
+</table></figure>
+<p><strong>The parameters</strong></p>
+<p>The four presets set them all at once:</p>
+<figure class="article-table" id="paper-table-7"><figcaption data-table-number="7" id="table-caption-7">The island parameters and their values in the four presets.</figcaption><table aria-labelledby="table-caption-7">
+<thead>
+<tr>
+<th>Parameter</th>
+<th>What it does</th>
+<th>Off</th>
+<th>Natural</th>
+<th>Worn</th>
+<th>Well-loved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Islands</td>
+<td>How many islands there are, on average.</td>
+<td>0&nbsp;/&nbsp;cm²</td>
+<td>0.06&nbsp;/&nbsp;cm²</td>
+<td>0.15&nbsp;/&nbsp;cm²</td>
+<td>0.3&nbsp;/&nbsp;cm²</td>
+</tr>
+<tr>
+<td>Island size</td>
+<td>How wide an island is. Each one is drawn between 70 and 130&nbsp;% of this; the three smaller spheres at its rim can reach further out.</td>
+<td>12&nbsp;mm</td>
+<td>10&nbsp;mm</td>
+<td>14&nbsp;mm</td>
+<td>18&nbsp;mm</td>
+</tr>
+<tr>
+<td>Island strength</td>
+<td>How far the centre of an island departs from the fuzz around it.</td>
+<td>0&nbsp;%</td>
+<td>40&nbsp;%</td>
+<td>70&nbsp;%</td>
+<td>100&nbsp;%</td>
+</tr>
+<tr>
+<td>Fuzzy / matted / worn share</td>
+<td>How often each kind is drawn.</td>
+<td>1&nbsp;:&nbsp;1&nbsp;:&nbsp;1</td>
+<td>2&nbsp;:&nbsp;1&nbsp;:&nbsp;1</td>
+<td>1&nbsp;:&nbsp;2&nbsp;:&nbsp;1</td>
+<td>1&nbsp;:&nbsp;1&nbsp;:&nbsp;2</td>
+</tr>
+</tbody>
+</table></figure>
+<p>The islands are independent of the knitting irregularities: they change only the fibres, never the yarn. The comparison renders in <em>Introducing yarn irregularities</em> combine both: the Natural, Hand-made and Rustic patches there use the Natural, Worn and Well-loved islands.</p>
+<h3 id="different-wool-profiles">Different Wool Profiles</h3>
+<p>The Wool Shader provides several presets for basic wool profiles. Each profile defines a complete set of parameters, which together create the appearance of a specific wool type. I specified these parameters empirically during my experiments. They are not measured material properties.</p>
+<p>A wool profile describes the character of the fibres, the ply relief of the yarn and how much light the yarn lets through. The colour and the fibre density are separate settings. The density presets place Light 30, Medium 60 and Dense 125 fibre candidates per millimetre of yarn, and fibre islands add patches of fuzzier, matted or worn fibres on top.</p>
+<details class="article-table article-table--collapsible" id="paper-table-8"><summary data-table-number="8" id="table-caption-8">The wool profiles and their values.</summary><table aria-labelledby="table-caption-8">
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Standard</th>
+<th style="text-align: right;">Soft (default)</th>
+<th style="text-align: right;">Fluffy</th>
+<th style="text-align: right;">Hard</th>
+<th style="text-align: right;">Mohair</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stray fibres</td>
+<td style="text-align: right;">3 %</td>
+<td style="text-align: right;">10 %</td>
+<td style="text-align: right;">8 %</td>
+<td style="text-align: right;">10 %</td>
+<td style="text-align: right;">25 %</td>
+</tr>
+<tr>
+<td>Fuzz length, min / median / max [mm]</td>
+<td style="text-align: right;">1.2 / 2.6 / 5.0</td>
+<td style="text-align: right;">1.2 / 2.6 / 5.0</td>
+<td style="text-align: right;">1.5 / 3.0 / 6.0</td>
+<td style="text-align: right;">0.4 / 0.8 / 1.6</td>
+<td style="text-align: right;">3.0 / 6.0 / 12</td>
+</tr>
+<tr>
+<td>Fuzz thickness [µm]</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>Fuzz at a neighbouring stitch</td>
+<td style="text-align: right;">cut</td>
+<td style="text-align: right;">cut</td>
+<td style="text-align: right;">cut</td>
+<td style="text-align: right;">cut</td>
+<td style="text-align: right;">lies on it</td>
+</tr>
+<tr>
+<td>Longest stray [mm]</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">3.2</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>Stray thickness [µm]</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>Stray curl radius [mm]</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">1.5</td>
+<td style="text-align: right;">none</td>
+<td style="text-align: right;">0.8</td>
+</tr>
+<tr>
+<td>Generated segments per fibre, max</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr>
+<td>Taper</td>
+<td style="text-align: right;">whole fibre</td>
+<td style="text-align: right;">last 20 %, tip 0.3</td>
+<td style="text-align: right;">last 20 %, tip 0.1</td>
+<td style="text-align: right;">last 20 %, tip 0.1</td>
+<td style="text-align: right;">last 30 %, tip 0.1</td>
+</tr>
+<tr>
+<td>Ply relief</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">0.4</td>
+</tr>
+<tr>
+<td>Yarn translucency</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">0.5</td>
+</tr>
+<tr>
+<td>Fuzz shading</td>
+<td style="text-align: right;">hair</td>
+<td style="text-align: right;">hair</td>
+<td style="text-align: right;">hair</td>
+<td style="text-align: right;">diffuse + sheen</td>
+<td style="text-align: right;">hair</td>
+</tr>
+</tbody>
+</table></details>
+<p>The segment limit applies before export. Tapering can add more segments near the tips.</p>
+<p>The renders below put four of the profiles on the teddy bears of the opening image, seen from the same camera in the same light. The knit, the yarn colours and the room are the same in all four; only the wool profile changes. Soft is the look of the opening image. Hard keeps its short fibres close to the yarn, so the stitches stand out. Mohair and Fluffy raise a halo of long fibres that catches the window light along the silhouettes. Standard is left out: at this distance it looks much like Soft.</p>
+<figure class="article-figure article-figure--group article-figure--grid" id="paper-figure-17" data-figure-key="17"><div class="subfig-row"><div class="subfig" style="--aspect: 1.7778"><a href="media/wool-profiles/teddy-soft.png" data-enlarge data-caption="(a) Soft (the default), the look of the opening image."><img src="media/wool-profiles/teddy-soft.png" alt="The two knitted teddy bears in the sunlit room with the Soft wool profile: a short, even coat over the stitches" width="1920" height="1080" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a) Soft</span></div><div class="subfig" style="--aspect: 1.7778"><a href="media/wool-profiles/teddy-hard.png" data-enlarge data-caption="(b) Hard: short, straight fibres lying close to the yarn."><img src="media/wool-profiles/teddy-hard.png" alt="The same bears with the Hard wool profile: short fibres close to the yarn, crisp stitches, a darker brown coat" width="1920" height="1080" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b) Hard</span></div></div><div class="subfig-row"><div class="subfig" style="--aspect: 1.7778"><a href="media/wool-profiles/teddy-mohair.png" data-enlarge data-caption="(c) Mohair: long, fine fibres in a soft halo."><img src="media/wool-profiles/teddy-mohair.png" alt="The same bears with the Mohair wool profile: a bright halo of long, fine fibres around both silhouettes" width="1920" height="1080" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c) Mohair</span></div><div class="subfig" style="--aspect: 1.7778"><a href="media/wool-profiles/teddy-fluffy.png" data-enlarge data-caption="(d) Fluffy: long, curled strays that stand off the yarn."><img src="media/wool-profiles/teddy-fluffy.png" alt="The same bears with the Fluffy wool profile: long, curled strays standing off the yarn all around the bears" width="1920" height="1080" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(d) Fluffy</span></div></div><figcaption data-paper-number="17" id="figure-caption-17">Four wool profiles on the knitted teddy bears: the same knit, camera and light, only the wool profile changes. <span class="caption-part">(a) Soft (the default), the look of the opening image.</span> <span class="caption-part">(b) Hard: short, straight fibres lying close to the yarn.</span> <span class="caption-part">(c) Mohair: long, fine fibres in a soft halo.</span> <span class="caption-part">(d) Fluffy: long, curled strays that stand off the yarn.</span></figcaption></figure>
+<details class="settings">
+<summary>Settings used for these renders</summary>
+<table>
+<thead>
+<tr>
+<th>UI setting</th>
+<th>Soft</th>
+<th>Hard</th>
+<th>Mohair</th>
+<th>Fluffy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Knit step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Object</td>
+<td>Teddy bears, both</td>
+<td>Teddy bears, both</td>
+<td>Teddy bears, both</td>
+<td>Teddy bears, both</td>
+</tr>
+<tr>
+<td>Gauge preset</td>
+<td>Dense</td>
+<td>Dense</td>
+<td>Dense</td>
+<td>Dense</td>
+</tr>
+<tr>
+<td>Yarn geometry: Construction</td>
+<td>Single tube</td>
+<td>Single tube</td>
+<td>Single tube</td>
+<td>Single tube</td>
+</tr>
+<tr>
+<td>Appearance: Ply texture</td>
+<td>3 plies</td>
+<td>3 plies</td>
+<td>3 plies</td>
+<td>3 plies</td>
+</tr>
+<tr>
+<td>Hand-made preset</td>
+<td>Rustic</td>
+<td>Rustic</td>
+<td>Rustic</td>
+<td>Rustic</td>
+</tr>
+<tr>
+<td>Solve quality</td>
+<td>Final</td>
+<td>Final</td>
+<td>Final</td>
+<td>Final</td>
+</tr>
+<tr>
+<td>Yarn tessellation</td>
+<td>Reduced</td>
+<td>Reduced</td>
+<td>Reduced</td>
+<td>Reduced</td>
+</tr>
+<tr>
+<td><strong>Fibres step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wool preset</td>
+<td>Soft wool</td>
+<td>Hard wool</td>
+<td>Mohair</td>
+<td>Fluffy wool</td>
+</tr>
+<tr>
+<td>Stray preset</td>
+<td>Loose</td>
+<td>Aligned</td>
+<td>Loose</td>
+<td>Long tail</td>
+</tr>
+<tr>
+<td>Density preset</td>
+<td>Custom</td>
+<td>Custom</td>
+<td>Custom</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>Density</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+<td><strong>90 / mm</strong></td>
+</tr>
+<tr>
+<td>Island preset</td>
+<td>Natural</td>
+<td>Natural</td>
+<td>Natural</td>
+<td>Natural</td>
+</tr>
+<tr>
+<td><strong>Export step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Include fibres</td>
+<td>on</td>
+<td>on</td>
+<td>on</td>
+<td>on</td>
+</tr>
+<tr>
+<td>Filling</td>
+<td>on</td>
+<td>on</td>
+<td>on</td>
+<td>on</td>
+</tr>
+<tr>
+<td><strong>Wool preset only</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Fuzz hair colour</td>
+<td>yarn</td>
+<td>layer</td>
+<td>yarn</td>
+<td>layer</td>
+</tr>
+<tr>
+<td><strong>Renderer</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>Bear DoF</td>
+<td>Bear DoF</td>
+<td>Bear DoF</td>
+<td>Bear DoF</td>
+</tr>
+<tr>
+<td>Exposure</td>
+<td>2.0</td>
+<td>2.0</td>
+<td>2.0</td>
+<td>2.0</td>
+</tr>
+</tbody>
+</table>
+<p><em>Settings as the knit_viewer shows them; every value not listed is the viewer's opening default, and every fibre value not listed is the wool preset's own (see the profile table above). All four use one knit; only the Fibres step differs. Fluffy uses 90 fibre candidates per millimetre instead of 135: at 135, its 34 million exported fibre segments did not fit into my GPU's 12 GB. The yarn albedos are the export's (white 0.87, 0.76, 0.63; brown 0.42, 0.20, 0.08); with the hair colour "layer", Hard and Fluffy draw their fuzz as a thin layer over the yarn, which makes the brown bear read darker. Render: 1920 × 1080, 500 spp, OptiX denoiser, 32 bounces; the watercolor room and the opening image's camera, lit by the sunflowers sky (HDRI, intensity 3.0) through the two windows. Exposure 2.0 matches the opening image, which was rendered with the renderer's earlier, brighter tone curve. Larger images did not fit into 12 GB. Renderer revision: <code>dd8870fda</code> with local changes. Rendered on 22 and 23 November; made with <code>tools/article/make_wool_types.py</code>.</em></p>
+</details>
+<h3 id="yarn-and-fibre-materials">Yarn and fibre materials</h3>
+<p>By this point I had plenty of yarn and fibres, and it was time to get the materials right in my spectral path tracer. For me, the easiest and most enjoyable part!</p>
+<p>The yarn tubes use my renderer's 'fabric' material: a diffuse body with a sheen effect: a cloth-like rim at grazing angles, tinted to the yarn's colour. A normal map adds the ply relief. </p>
+<p>I also let some light pass through the tube, which helps when it is lit from behind: a share of 0.15 for Hard, 0.3 for Soft and Fluffy, and 0.5 for Mohair. This is a simple approximation, without volume scattering or a thickness-dependent absorption: thicker yarn lets through the same share as thinner yarn. </p>
+<p>The individual fibres use a <code>hair</code> material, based on <a href="https://pbr-book.org/4ed/Reflection_Models/Scattering_from_Hair">pbrt-v4's hair model</a> (Chiang et al., 2016). Light can reflect off the surface, pass through the fibre or reflect internally before leaving. Two roughness controls set how broadly it scatters along and around the fibre.</p>
+<p>This part of my <code>fibre_outgoing</code> function shows how much light the first three paths carry, simplified to one wavelength:</p>
+<pre><code class="language-cpp">// F is Fresnel reflectance at the fibre surface.
+// sigmaA is absorption; the refracted path length is measured in fibre radii.
+float T = expf(-sigmaA * distanceInRadii); // Light surviving one crossing.
+float transmit = 1.f - F;
+
+float R   = F;                       // Reflect off the surface.
+float TT  = transmit * transmit * T;  // Enter, cross the fibre, leave.
+float TRT = TT * F * T;              // Reflect inside, cross again, leave.
+</code></pre>
+<p>The BSDF accounts for these internal paths without tracing each bounce inside the fibre. </p>
+<h4 id="lit-from-behind">Lit from behind</h4>
+<p>Wool fibres are dielectric. Light can reflect off their surface or refract into them. Some light is absorbed, while some leaves the fibre again, including on the opposite side. This contributes to the translucent appearance when wool is lit from behind.</p>
+<p>Plies are made of many fibres, so light may interact with several fibres before leaving the bundle. Longer paths give more opportunity for absorption, and scattering can redirect light back towards the illuminated side. A thick ply therefore often transmits less light than an individual fibre. The result also depends on the fibre colour and how tightly the fibres are packed.</p>
+<p>For individual fibres, my renderer uses a hair material that accounts for reflection, refraction and absorption, including paths with internal reflections. These effects are evaluated by the shading model rather than by tracing every event inside the fibre.</p>
+<p>For yarn and ply tubes, I use a simpler approximation. A weighted random choice determines whether light is reflected or transmitted. Transmission is diffuse, so the outgoing direction is not the same as the incoming direction. This does not simulate the internal fibre structure, and the transmission amount does not depend on the tube's thickness.</p>
+<p>This is how translucent leaves are often rendered, applied twice: at each wall of the tube, the light continues in a random direction that does not depend on where it came from. Nothing is refracted.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-18" data-figure-key="18"><div class="subfig-row"><div class="subfig" style="--aspect: 1.0000"><a href="media/teddy/backlit-ear-with-fibres.png" data-enlarge data-caption="(a) Lit from behind: the fuzz and strays along the ear&#x27;s edge carry the light."><img src="media/teddy/backlit-ear-with-fibres.png" alt="The white teddy&#x27;s ear lit from behind: a bright rim of fuzz and strays along the dark silhouette" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/swatches/blue-swatch-backlit.png" data-enlarge data-caption="(b) The blue swatch, a single layer of knitting, lit from straight behind: the light shines through the gaps between the stitches, and the fibres around them glow."><img src="media/swatches/blue-swatch-backlit.png" alt="A close-up of a few stitches of the blue swatch, lit from straight behind: white light in the gaps between the stitches, the fibres around each gap glowing light blue against the dark yarn" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="18" id="figure-caption-18"><span class="caption-part">(a) Lit from behind: the fuzz and strays along the ear&#x27;s edge carry the light.</span> <span class="caption-part">(b) The blue swatch, a single layer of knitting, lit from straight behind: the light shines through the gaps between the stitches, and the fibres around them glow.</span></figcaption></figure>
+</div></section><section class="article-section" aria-labelledby="making-it-fit-on-the-gpu" data-section="05"><h2 id="making-it-fit-on-the-gpu">Making it fit on the GPU</h2><div class="section-body">
+<p>There are basically three levels of detail for modelling yarn, starting with the finest geometric detail:</p>
+<p><strong>Yarn built from individual fibres</strong></p>
+<p>The most detailed representation, intended for very close views. Each ply consists of long, thin fibres modelled as line segments. At this level, individual fibres become visible in the silhouette and between neighbouring fibres. However, a lower fibre count might result in visible gaps and poor occlusion. To fill those gaps, the fibre model can include a simpler core surrounded by fibres.</p>
+<p>This fibre geometry is also used to create the baked yarn texture maps.</p>
+<p><strong>Yarn made from separate ply tubes</strong></p>
+<p>Modelling the plies as separate geometry gives the yarn a realistic silhouette and creates gaps that naturally produce occlusion and shadows. The Wool Shader supports up to four geometric plies. Using real ply geometry makes wool look more realistic, but also increases the memory footprint. Depending on the fibre count, the plies might be occluded so that the higher visual detail might not pay off.</p>
+<p>The same ply shape is also used to generate the procedural ply normal map.</p>
+<p><strong>Yarn as a single tube</strong></p>
+<p>The simplest approach, offering a good trade-off between realism and performance. The default configuration for the Wool Shader.</p>
+<p>In most cases, the reduced geometric detail is compensated for by texture mapping, faking the look of more geometric detail. In addition, loose fibres partially occlude the yarn, so higher geometric detail often does not pay off except in very close views.</p>
+<p>Here's a compact overview:</p>
+<figure class="article-table" id="paper-table-9"><figcaption data-table-number="9" id="table-caption-9">Making it fit on the GPU.</figcaption><table aria-labelledby="table-caption-9">
+<thead>
+<tr>
+<th>Construction</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single tube</td>
+<td>One tube per yarn. A ply texture can show the plies as maps on the tube. The default.</td>
+</tr>
+<tr>
+<td>Ply tubes</td>
+<td>2 to 4 real ply tubes inside the yarn.</td>
+</tr>
+<tr>
+<td>Fibre strands</td>
+<td>1 to 3 plies of long fibres in place of the tube.</td>
+</tr>
+<tr>
+<td>Fibre maps</td>
+<td>One tube per yarn, with maps baked from those same fibres.</td>
+</tr>
+</tbody>
+</table></figure>
+<p>The fibres of the last two are set up in the Fibres step.</p>
+<p>These images show all 3 versions:</p>
+<figure class="article-figure article-figure--group" id="paper-figure-19" data-figure-key="19"><div class="subfig subfig--lead" style="--aspect: 2.8352"><a href="media/yarn/construction-comparison.png" data-enlarge data-caption="Single strand, 3 plies and fibre yarn on the same knit."><img src="media/yarn/construction-comparison.png" alt="The white teddy&#x27;s face knitted as single yarn tubes, three geometric plies and a yarn made of fibres" width="3096" height="1092" loading="lazy" decoding="async"></a></div><div class="subfig-strip"><span class="strip-label" aria-hidden="true">Single renders</span><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/single-tube.png" data-enlarge data-caption="(a) Strand as single yarn."><img src="media/yarn/single-tube.png" alt="The white teddy&#x27;s face knitted as single yarn tubes" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/three-ply-tubes.png" data-enlarge data-caption="(b) Strand made from three plies."><img src="media/yarn/three-ply-tubes.png" alt="The white teddy&#x27;s face knitted as three geometric plies" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/fibre-yarn.png" data-enlarge data-caption="(c) Strand made from fibres."><img src="media/yarn/fibre-yarn.png" alt="The white teddy&#x27;s face knitted as yarn made of fibres" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/fibre-yarn-macro.png" data-enlarge data-caption="(d) Strand made from fibres, 5 mm close-up: the single fibres."><img src="media/yarn/fibre-yarn-macro.png" alt="A 5 mm close-up of the fibre yarn on the teddy&#x27;s muzzle, single fibres visible" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(d)</span></div></div><figcaption data-paper-number="19" id="figure-caption-19">Single strand, 3 plies and fibre yarn on the same knit. Single renders: <span class="caption-part">(a) Strand as single yarn.</span> <span class="caption-part">(b) Strand made from three plies.</span> <span class="caption-part">(c) Strand made from fibres.</span> <span class="caption-part">(d) Strand made from fibres, 5 mm close-up: the single fibres.</span></figcaption></figure>
+<details class="settings">
+<summary>Settings used for these renders</summary>
+<table>
+<thead>
+<tr>
+<th>UI setting</th>
+<th>Single strand</th>
+<th>3 plies</th>
+<th>Fibre yarn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Knit step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Gauge preset</td>
+<td>Dense</td>
+<td>Dense</td>
+<td>Dense</td>
+</tr>
+<tr>
+<td>Yarn geometry: Construction</td>
+<td>Single tube</td>
+<td>Separate ply tubes</td>
+<td>Single tube</td>
+</tr>
+<tr>
+<td>Yarn geometry: Ply tubes</td>
+<td>-</td>
+<td>3</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Appearance: Ply texture</td>
+<td>Off</td>
+<td>(ply tubes)</td>
+<td>Off</td>
+</tr>
+<tr>
+<td>Hand-made preset</td>
+<td>Hand-made</td>
+<td>Hand-made</td>
+<td>Hand-made</td>
+</tr>
+<tr>
+<td>Solve quality</td>
+<td>Final</td>
+<td>Final</td>
+<td>Final</td>
+</tr>
+<tr>
+<td>Yarn tessellation</td>
+<td>Fine</td>
+<td>Fine</td>
+<td>Fine</td>
+</tr>
+<tr>
+<td><strong>Fibres step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wool preset</td>
+<td>Soft wool</td>
+<td>Soft wool</td>
+<td>Soft wool</td>
+</tr>
+<tr>
+<td>Density preset</td>
+<td>Custom</td>
+<td>Custom</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>Density</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+</tr>
+<tr>
+<td>Island preset</td>
+<td>Natural</td>
+<td>Natural</td>
+<td>Natural</td>
+</tr>
+<tr>
+<td><strong>Export step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Include fibres</td>
+<td>off</td>
+<td>off</td>
+<td>off</td>
+</tr>
+<tr>
+<td>Filling</td>
+<td>on</td>
+<td>on</td>
+<td>off</td>
+</tr>
+<tr>
+<td><strong>Settings file only</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Yarn body</td>
+<td>off</td>
+<td>off</td>
+<td>on</td>
+</tr>
+<tr>
+<td>Yarn body: plies / fibres per yarn</td>
+<td>-</td>
+<td>-</td>
+<td>3 / 250</td>
+</tr>
+<tr>
+<td>Yarn body: fibre diameter</td>
+<td>-</td>
+<td>-</td>
+<td>30 µm</td>
+</tr>
+<tr>
+<td>Yarn body: shell depth / irregularity / core</td>
+<td>-</td>
+<td>-</td>
+<td>0.60 / 2 / opaque</td>
+</tr>
+</tbody>
+</table>
+<p><em>Settings as the knit_viewer shows them; every value not listed is the viewer's opening default. Render: 1024 × 1024, 500 spp, OptiX denoiser; photon_path_tracer with the watercolor scene's sky HDRI (intensity 0.5, sun from the left), only the white bear's head and muzzle; the fibre yarn with 32 bounces, its close-up a 5 mm field. Include fibres controls the loose fuzz, not the structural fibres in the fibre-yarn prototype. Filling records the initial export setting; the shot-preparation script removes the filling mesh for these close-ups.</em></p>
+</details>
+<h3 id="reducing-yarn-geometry">Reducing yarn geometry</h3>
+<p>Even at fairly low resolution, the triangle counts for plies become significant quickly. This table shows the triangle count for the two teddy bears: even at the lowest resolution, there are already about 5.8 million triangles.</p>
+<figure class="article-table" id="paper-table-10"><figcaption data-table-number="10" id="table-caption-10">Triangle counts for both teddy bears, excluding fibres. The Reduced setting is the default.</figcaption><table aria-labelledby="table-caption-10">
+<thead>
+<tr>
+<th>Yarn tube resolution</th>
+<th style="text-align: right;">Triangles, one yarn tube</th>
+<th style="text-align: right;">Triangles, two ply tubes</th>
+<th style="text-align: right;">Triangles, three ply tubes</th>
+<th style="text-align: right;">Triangles, four ply tubes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Coarse</strong></td>
+<td style="text-align: right;">5,763,060</td>
+<td style="text-align: right;">15,835,712</td>
+<td style="text-align: right;">24,766,648</td>
+<td style="text-align: right;">34,958,176</td>
+</tr>
+<tr>
+<td><strong>Reduced</strong> (default)</td>
+<td style="text-align: right;">7,684,080</td>
+<td style="text-align: right;">21,114,216</td>
+<td style="text-align: right;">33,022,128</td>
+<td style="text-align: right;">46,610,816</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td style="text-align: right;">15,368,032</td>
+<td style="text-align: right;">47,506,896</td>
+<td style="text-align: right;">74,299,632</td>
+<td style="text-align: right;">104,874,180</td>
+</tr>
+<tr>
+<td><strong>Fine</strong></td>
+<td style="text-align: right;">61,471,840</td>
+<td style="text-align: right;">158,355,940</td>
+<td style="text-align: right;">247,664,920</td>
+<td style="text-align: right;">349,579,840</td>
+</tr>
+</tbody>
+</table></figure>
+<p>Real plies look better up close, but they also add a lot of geometry. But this level of detail is rarely ever needed:</p>
+<p>from farther away, a single tube with a normal map is often enough. That's why I made the combination 'reduced single ply geometry plus normal map'  the default. </p>
+<p>The downside is that the 'single-tubed' yarn keeps its smooth silhouette, without the real gaps and shadows between plies. Discretization artifacts between the ply segments will show only when the camera is close. In addition, fibres cover parts of the yarn and cast shadows on it, which helps hide the missing ply geometry.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-20" data-figure-key="20"><div class="subfig subfig--lead" style="--aspect: 2.8352"><a href="media/yarn/ply-normal-map-comparison.png" data-enlarge data-caption="3 plies, the normal-mapped tube, and the same tube covered by Standard wool fibres."><img src="media/yarn/ply-normal-map-comparison.png" alt="The teddy&#x27;s face with geometric plies, a normal-mapped tube, and the normal-mapped tube under Standard wool fibres" width="3096" height="1092" loading="lazy" decoding="async"></a></div><div class="subfig-strip"><span class="strip-label" aria-hidden="true">Single renders</span><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/geometric-plies.png" data-enlarge data-caption="(a) Real geometry: 3 plies."><img src="media/yarn/geometric-plies.png" alt="The teddy&#x27;s face knitted as three geometric plies" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/normal-mapped-tube.png" data-enlarge data-caption="(b) A single tube with a ply normal map."><img src="media/yarn/normal-mapped-tube.png" alt="The teddy&#x27;s face knitted as a single tube with a ply normal map" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/yarn/normal-mapped-tube-with-fuzz.png" data-enlarge data-caption="(c) The normal-mapped tube under Standard wool fibres: the fibres hide the missing geometry."><img src="media/yarn/normal-mapped-tube-with-fuzz.png" alt="The normal-mapped tube covered by Standard wool fibres" width="1024" height="1024" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><figcaption data-paper-number="20" id="figure-caption-20">3 plies, the normal-mapped tube, and the same tube covered by Standard wool fibres. Single renders: <span class="caption-part">(a) Real geometry: 3 plies.</span> <span class="caption-part">(b) A single tube with a ply normal map.</span> <span class="caption-part">(c) The normal-mapped tube under Standard wool fibres: the fibres hide the missing geometry.</span></figcaption></figure>
+<details class="settings">
+<summary>Settings used for these renders</summary>
+<table>
+<thead>
+<tr>
+<th>UI setting</th>
+<th>3 plies</th>
+<th>Normal-mapped</th>
+<th>Normal map + fibres</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Knit step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Gauge preset</td>
+<td>Dense</td>
+<td>Dense</td>
+<td>Dense</td>
+</tr>
+<tr>
+<td>Yarn geometry: Construction</td>
+<td>Separate ply tubes</td>
+<td>Single tube</td>
+<td>Single tube</td>
+</tr>
+<tr>
+<td>Yarn geometry: Ply tubes</td>
+<td>3</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Appearance: Ply texture</td>
+<td>(ply tubes)</td>
+<td>3 plies</td>
+<td>3 plies</td>
+</tr>
+<tr>
+<td>Hand-made preset</td>
+<td>Hand-made</td>
+<td>Hand-made</td>
+<td>Hand-made</td>
+</tr>
+<tr>
+<td>Solve quality</td>
+<td>Final</td>
+<td>Final</td>
+<td>Final</td>
+</tr>
+<tr>
+<td>Yarn tessellation</td>
+<td>Fine</td>
+<td>Fine</td>
+<td>Fine</td>
+</tr>
+<tr>
+<td><strong>Fibres step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Wool preset</td>
+<td>Standard wool</td>
+<td>Standard wool</td>
+<td>Standard wool</td>
+</tr>
+<tr>
+<td>Density preset</td>
+<td>Custom</td>
+<td>Custom</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td>Density</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+<td>135 / mm</td>
+</tr>
+<tr>
+<td>Island preset</td>
+<td>Natural</td>
+<td>Natural</td>
+<td>Natural</td>
+</tr>
+<tr>
+<td><strong>Export step</strong></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Include fibres</td>
+<td>off</td>
+<td>off</td>
+<td>on</td>
+</tr>
+</tbody>
+</table>
+<p><em>Settings as the knit_viewer shows them; every value not listed is the viewer's opening default. Render: 1024 × 1024, 500 spp, OptiX denoiser; photon_path_tracer with the watercolor scene's sky HDRI (intensity 0.5, sun from the left), only the white bear's head and muzzle.</em></p>
+</details>
+<h3 id="baking-the-fibres-into-the-yarn">Baking the fibres into the yarn</h3>
+<p>With millions of fibres, a big part of the GPU memory goes into the acceleration structures, not into the fibres themselves. The blue swatch is the extreme case. Its yarn is made of real fibres, about 400 per yarn. With the fuzz, that is 34 million strand segments for a 12 cm swatch, and close to 5 GB of acceleration structures.</p>
+<p>So what can be done is to keep those fibres as the source of truth, but bake each yarn's fibre surface into texture maps on a plain yarn tube. Only the fuzz, the oriented and stray fibres, stays real geometry.</p>
+<p>I developed this bake for my tool by shooting rings of rays towards the yarn's axis and storing the visible fibre detail on a tube. This is my own contribution and was not motivated by existing work.</p>
+<p>Related work also uses ray tracing and texture maps to replace fibre geometry. My approach bakes each generated yarn into its own two-dimensional atlas, using the known bend and compression to map the fibres back to a straight yarn.</p>
+<details class="article-table article-table--collapsible" id="paper-table-11"><summary data-table-number="11" id="table-caption-11">Related work on replacing fibre geometry with texture maps.</summary><table aria-labelledby="table-caption-11">
+<thead>
+<tr>
+<th>Related work</th>
+<th>What it does</th>
+<th>What I do differently</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://shuangz.com/projects/practical_cloth-sa20/practical_cloth-sa20-ld.pdf">Montazeri et al., <em>A Practical Ply-Based Appearance Model of Woven Fabrics</em> (2020)</a>, Section 3.3</td>
+<td>Ray-trace a ply's cross-section to find visible fibres and store their normals in a 1D texture, with tangent and shadowing information. Blend several cross-sections along the ply to add variation.</td>
+<td>I shoot rays at the generated 3D fibres around the whole yarn, not one ply. Each yarn gets its own 2D maps along its length and circumference. The renderer uses one yarn tube, rather than separate ply tubes.</td>
+</tr>
+<tr>
+<td><a href="https://research-explorer.ista.ac.at/download/12358/12483/thesis_gsperl_compressed.pdf">Sperl, <em>Homogenizing Yarn Simulations</em> (2022)</a>, Appendix C.4.3, Figure C.5</td>
+<td>Bake ply and fibre geometry into normal and ambient-occlusion textures, then stretch, tile and shear them to show twisted plies on yarn geometry.</td>
+<td>I bake each generated yarn instead of tiling a single-ply texture. The bake also stores coverage and normal spread for the highlight and roughness. Loose fuzz stays as geometry.</td>
+</tr>
+</tbody>
+</table></details>
+<h4 id="what-it-buys">What it buys</h4>
+<p>This is the main result. I rendered the blue swatch twice: </p>
+<ol>
+<li>with its yarn as explicit fibres, </li>
+<li>and with its yarn as a baked tube. </li>
+</ol>
+<p>The knit and the loose fuzz were the same. The renderer's peak memory <strong>fell from 7.1 GiB to 2.9 GiB</strong>:</p>
+<figure class="article-table" id="paper-table-12"><figcaption data-table-number="12" id="table-caption-12">1600 × 1000, 128 spp. The close-up figures exclude the first-render texture compilation; see below. My GPU was shared with other work, so timings carry some noise.</figcaption><table aria-labelledby="table-caption-12">
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Rendered as fibres</th>
+<th style="text-align: right;">Rendered as baked maps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strand segments</td>
+<td style="text-align: right;">34.1 M</td>
+<td style="text-align: right;">2.3 M (fuzz only)</td>
+</tr>
+<tr>
+<td>Acceleration structures</td>
+<td style="text-align: right;">4.9 GB</td>
+<td style="text-align: right;">0.4 GB</td>
+</tr>
+<tr>
+<td>Textures</td>
+<td style="text-align: right;">6 MB</td>
+<td style="text-align: right;">741 MB</td>
+</tr>
+<tr>
+<td>Renderer peak memory</td>
+<td style="text-align: right;">7.1 GiB</td>
+<td style="text-align: right;">2.9 GiB</td>
+</tr>
+<tr>
+<td>Samples per second, mid camera</td>
+<td style="text-align: right;">3.6</td>
+<td style="text-align: right;">7.0</td>
+</tr>
+<tr>
+<td>Samples per second, close-up</td>
+<td style="text-align: right;">about 3.0</td>
+<td style="text-align: right;">about 4.3</td>
+</tr>
+</tbody>
+</table></figure>
+<p>Close up, the difference is obvious. The fibres show single bright strands, small gaps and a soft, translucent body. The maps show the twisted plies and their fibre bundles as streaks with dark gaps between them, but no single bright strands, and the yarn renders about half as bright.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-21" data-figure-key="21"><div class="subfig-row"><div class="subfig" style="--aspect: 1.6000"><a href="media/baking/worsted-fibre-geometry-closeup.png" data-enlarge data-caption="(a) Worsted, rendered as fibres."><img src="media/baking/worsted-fibre-geometry-closeup.png" alt="Close-up of the blue swatch, yarn rendered as fibres" width="800" height="500" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.6000"><a href="media/baking/worsted-baked-maps-closeup.png" data-enlarge data-caption="(b) Worsted, rendered as baked maps."><img src="media/baking/worsted-baked-maps-closeup.png" alt="The same close-up, yarn rendered as baked maps" width="800" height="500" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="21" id="figure-caption-21"><span class="caption-part">(a) Worsted, rendered as fibres.</span> <span class="caption-part">(b) Worsted, rendered as baked maps.</span></figcaption></figure>
+<p>In the earlier pilot comparison, the two renders looked similar to me from the photo's viewpoint. The stitches, ply twist and fuzz were all there, but the images were not identical. Over three viewpoints, the colour difference on the fabric at quarter resolution was 5 to 8 ΔE, and the structural similarity (SSIM) was 0.66 to 0.80.</p>
+<figure class="article-figure article-figure--group" id="paper-figure-22" data-figure-key="22"><div class="subfig-row"><div class="subfig" style="--aspect: 1.0000"><a href="media/baking/blue-swatch-fibre-geometry.png" data-enlarge data-caption="(a) Rendered as fibres."><img src="media/baking/blue-swatch-fibre-geometry.png" alt="The blue swatch from the photo&#x27;s viewpoint, yarn rendered as fibres" width="700" height="700" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0000"><a href="media/baking/blue-swatch-baked-maps.png" data-enlarge data-caption="(b) Rendered as baked maps, with the same fuzz."><img src="media/baking/blue-swatch-baked-maps.png" alt="The same swatch, yarn rendered as baked maps" width="700" height="700" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="22" id="figure-caption-22"><span class="caption-part">(a) Rendered as fibres.</span> <span class="caption-part">(b) Rendered as baked maps, with the same fuzz.</span></figcaption></figure>
+<p><em>1200 × 1200, 128 spp, the reference photograph's camera.</em></p>
+<h4 id="how-the-bake-works">How the bake works</h4>
+<p>The yarn's fibres are built around a straight "nominal" yarn axis and then bent and squeezed along the knitted yarn's path. The tube that replaces them uses the same path: its texture coordinate <em>u</em> runs along the yarn and <em>v</em> around it. Because I know the bend, I can invert it. Every fibre point lands exactly on the tube's own (along, around) chart, so a "helical scan" of the yarn becomes a regular grid of texels in the straight yarn.</p>
+<p>At each texel I shoot 3 × 3 rays from just outside the yarn towards its axis and keep the first fibre each ray hits. From those hits I bake:</p>
+<ul>
+<li>a <strong>normal map</strong>: the average fibre normal, in the tube's tangent space;</li>
+<li>a <strong>coverage map</strong>: the share of rays that hit a fibre, used to scale the highlight's normal-incidence reflectance;</li>
+<li>an <strong>ambient-occlusion map</strong>: a horizon scan over the baked height at the scale of a ply, which darkens the valleys between plies, times the light that reaches each hit through the fibres above it, which darkens the fibres below the surface;</li>
+<li>the <strong>spread of the normals</strong> within the texel, which I turn into roughness (Toksvig, 2005), so fibres too fine for a texel still roughen the highlight.</li>
+</ul>
+<p>This is only an approximation to coverage: it weakens the highlight, but does not fully mask it at grazing angles.</p>
+<p>A ray that misses every fibre looks through a gap. It takes the height and normal of the ply's core, the round body of the ply inside its shell. If it misses the cores as well, it stops at half the yarn radius, between the plies, and takes the normal of the nearest ply's side. In my first version, these rays kept the tube's own normal, and a third of the swatch's texels showed a smooth, plain tube.</p>
+<p>The light through the fibres falls off as exp(−depth / ℓ), with the depth measured below the highest fibres nearby. Here ℓ = π d / (4 φ) is the mean free path between fibres of diameter d at the shell's packing φ: 0.1 mm for the swatch.</p>
+<p>Only geometry is baked. The darkening by occlusion and the roughness floor are material settings applied when the scene is exported, so moving a slider never starts a new bake. The renderer caps a texture side at 4096 texels, and a 50 cm yarn at a 40 µm texel is about 12,500 texels long. Each yarn's chart is therefore cut into strips of 4096 texels and stacked into one atlas.</p>
+<figure class="article-figure article-figure--single" id="paper-figure-23" data-figure-key="23" style="--aspect: 1.9608"><a href="media/baking/yarn-normal-atlas.png" data-enlarge data-caption="Part of one yarn&#x27;s normal atlas: the three plies run diagonally, and the yarn continues from strip to strip."><img src="media/baking/yarn-normal-atlas.png" alt="Part of one yarn&#x27;s baked normal map: three twisted plies as diagonal bands, cut into stacked strips" width="1000" height="510" loading="lazy" decoding="async"></a><figcaption data-paper-number="23" id="figure-caption-23">Part of one yarn&#x27;s normal atlas: the three plies run diagonally, and the yarn continues from strip to strip.</figcaption></figure>
+<h4 id="known-limitations">Known limitations</h4>
+<ul>
+<li><strong>Texture compilation.</strong> The renderer compiles the 98 map textures on a package's first render. For the swatch, that takes about 80 seconds, once for each new set of map files. A slider that changes the occlusion darkening or the roughness floor rewrites some of those files, so the render preview may pay part of that cost again.</li>
+<li><strong>Texture memory grows with yarn length.</strong> The swatch's 12 m of yarn need 741 MB. A single teddy piece holds 52 m of yarn, which would need gigabytes at the same texel. Large objects will need a coarser texel.</li>
+<li><strong>The bake itself</strong> took under three minutes on the CPU for the swatch's 24 yarns.</li>
+<li><strong>Soft wool rendered as fibres</strong> is the expensive case: 65 million body segments. Its 128-spp close-up did not finish within 25 minutes.</li>
+</ul>
+<p>In that earlier test, baked maps needed well under half the peak memory and sampled about twice as fast from the mid camera. For close-ups of single fibres, the fibres remain worth their cost.</p>
+</div></section><section class="article-section" aria-labelledby="comparing-with-a-real-photograph" data-section="06"><h2 id="comparing-with-a-real-photograph">Comparing with a real photograph</h2><div class="section-body">
+<p>At the end of the project, I wanted to compare my results with real knitting samples. This was when I stumbled upon the incredible sample photographs by Kristen McDonnell of <a href="https://www.studioknitsf.com/">Studio Knit</a>. Her page sure is a source of endless inspiration for knitting-obsessed computer graphics enthusiasts!</p>
+<p>I used her stockinette-stitch photographs as visual references for a small swatch scene. I modelled the swatch and needle geometry myself and rendered the scene with my spectral path tracer.</p>
+<p>The blue and cream swatches are shown below beside their reference photographs. Use the controls to switch from the top view to the angled camera view. The cream comparison keeps the same top-view photograph, since there is no matching angled reference in this set.</p>
+<h3 id="blue-swatch">Blue swatch</h3>
+<figure class="article-figure article-figure--group article-figure--slides article-figure--comparison" id="paper-figure-24" data-figure-key="24" aria-label="Render and photograph comparison"><div class="subfig-row"><div class="subfig" data-slide-label="Top view"><div class="comparison-pair"><div class="comparison-panel"><span class="comparison-label">Render</span><a href="media/swatches/blue-top.png" data-enlarge data-caption="Blue swatch, rendered top view."><img src="media/swatches/blue-top.png" alt="My blue swatch rendered from above" width="2400" height="1684" loading="lazy" decoding="async"></a></div><div class="comparison-panel"><span class="comparison-label">Reference photograph</span><a href="media/references/studio-knit-blue-top-crop.png" data-enlarge data-caption="Blue top view by Kristen McDonnell of Studio Knit; supplied working crop."><img src="media/references/studio-knit-blue-top-crop.png" alt="Blue stockinette swatch photographed from above by Kristen McDonnell of Studio Knit; supplied working crop" width="1200" height="842" loading="lazy" decoding="async"></a></div></div></div><div class="subfig" data-slide-label="Camera view"><div class="comparison-pair"><div class="comparison-panel"><span class="comparison-label">Render</span><a href="media/swatches/blue-angled.png" data-enlarge data-caption="Blue swatch, rendered angled camera view."><img src="media/swatches/blue-angled.png" alt="My blue swatch rendered from the angled camera" width="2400" height="1684" loading="lazy" decoding="async"></a></div><div class="comparison-panel"><span class="comparison-label">Reference photograph</span><a href="media/references/studio-knit-blue-angled.jpg" data-enlarge data-caption="Original angled photograph by Kristen McDonnell of Studio Knit, reproduced unaltered with permission."><img src="media/references/studio-knit-blue-angled.jpg" alt="Original angled blue swatch photograph by Kristen McDonnell of Studio Knit" width="1200" height="1200" loading="lazy" decoding="async"></a></div></div></div></div><figcaption data-paper-number="24" id="figure-caption-24"><span class="caption-part">Blue swatch, rendered top view. Reference: Blue top view by Kristen McDonnell of Studio Knit; supplied working crop.</span> <span class="caption-part">Blue swatch, rendered angled camera view. Reference: Original angled photograph by Kristen McDonnell of Studio Knit, reproduced unaltered with permission.</span></figcaption></figure>
+<p>Two things are worth a close look:</p>
+<ul>
+<li><strong>The ply twist.</strong> In the photograph, every strand shows the diagonal lines of its twisted plies. The rendered yarn carries the same twist.</li>
+<li><strong>The loops around the needle.</strong> The top row is still on the needle. In the photograph, each loop lies flat against the wood and widens into the stitch below it. Mine follow the same path, but a few stand too high.</li>
+</ul>
+<h3 id="cream-swatch">Cream swatch</h3>
+<figure class="article-figure article-figure--group article-figure--slides article-figure--comparison" id="paper-figure-25" data-figure-key="25" aria-label="Render and photograph comparison"><div class="subfig-row"><div class="subfig" data-slide-label="Top view"><div class="comparison-pair"><div class="comparison-panel"><span class="comparison-label">Render</span><a href="media/swatches/cream-top.png" data-enlarge data-caption="Cream swatch, rendered top view."><img src="media/swatches/cream-top.png" alt="My cream swatch rendered from above on blue paper" width="2400" height="1684" loading="lazy" decoding="async"></a></div><div class="comparison-panel"><span class="comparison-label">Reference photograph</span><a href="media/references/studio-knit-cream-top.jpg" data-enlarge data-caption="Cream top-view photograph by Kristen McDonnell of Studio Knit."><img src="media/references/studio-knit-cream-top.jpg" alt="Cream stockinette swatch on blue paper photographed from above by Kristen McDonnell of Studio Knit" width="1200" height="1200" loading="lazy" decoding="async"></a></div></div></div><div class="subfig" data-slide-label="Camera view"><div class="comparison-pair"><div class="comparison-panel"><span class="comparison-label">Render</span><a href="media/swatches/cream-angled.png" data-enlarge data-caption="Cream swatch, rendered angled camera view; the reference remains the top-view photograph."><img src="media/swatches/cream-angled.png" alt="My cream swatch rendered from the angled camera on blue paper" width="2400" height="1684" loading="lazy" decoding="async"></a></div><div class="comparison-panel"><span class="comparison-label">Reference photograph</span><a href="media/references/studio-knit-cream-top.jpg" data-enlarge data-caption="The same cream top-view photograph by Kristen McDonnell of Studio Knit."><img src="media/references/studio-knit-cream-top.jpg" alt="The same top-view cream swatch reference photograph by Kristen McDonnell of Studio Knit" width="1200" height="1200" loading="lazy" decoding="async"></a></div></div></div></div><figcaption data-paper-number="25" id="figure-caption-25"><span class="caption-part">Cream swatch, rendered top view. Reference: Cream top-view photograph by Kristen McDonnell of Studio Knit.</span> <span class="caption-part">Cream swatch, rendered angled camera view; the reference remains the top-view photograph. Reference: The same cream top-view photograph by Kristen McDonnell of Studio Knit.</span></figcaption></figure>
+<p>Reference photographs: <strong>Kristen McDonnell of <a href="https://www.studioknitsf.com/">Studio Knit</a></strong>. See her original <a href="https://www.studioknitsf.com/knitting-lessons-stockinette-stitch/">Stockinette Stitch tutorial</a>. The blue top-down reference is the supplied working crop; the other two photographs are shown in full. My renders are separate work.</p>
+<h3 id="the-four-renders">The four renders</h3>
+<p>Here are the four renders on their own, so you can look at the yarn, fibres and edges without the reference beside them.</p>
+<figure class="article-figure article-figure--group article-figure--slides" id="paper-figure-26" data-figure-key="26"><div class="subfig-row"><div class="subfig" data-slide-label="Blue: top" style="--aspect: 1.4252"><a href="media/swatches/blue-top.png" data-enlarge data-caption="(a) My blue swatch, top view."><img src="media/swatches/blue-top.png" alt="Blue swatch, top view" width="2400" height="1684" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" data-slide-label="Blue: camera" style="--aspect: 1.4252"><a href="media/swatches/blue-angled.png" data-enlarge data-caption="(b) My blue swatch, angled camera view."><img src="media/swatches/blue-angled.png" alt="Blue swatch, angled camera view" width="2400" height="1684" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" data-slide-label="Cream: top" style="--aspect: 1.4252"><a href="media/swatches/cream-top.png" data-enlarge data-caption="(c) My cream swatch, top view."><img src="media/swatches/cream-top.png" alt="Cream swatch, top view" width="2400" height="1684" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div><div class="subfig" data-slide-label="Cream: camera" style="--aspect: 1.4252"><a href="media/swatches/cream-angled.png" data-enlarge data-caption="(d) My cream swatch, angled camera view."><img src="media/swatches/cream-angled.png" alt="Cream swatch, angled camera view" width="2400" height="1684" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(d)</span></div></div><figcaption data-paper-number="26" id="figure-caption-26"><span class="caption-part">(a) My blue swatch, top view.</span> <span class="caption-part">(b) My blue swatch, angled camera view.</span> <span class="caption-part">(c) My cream swatch, top view.</span> <span class="caption-part">(d) My cream swatch, angled camera view.</span></figcaption></figure>
+<p>This is the swatch scene in my renderer, with its cameras, materials and render output:</p>
+<figure class="article-figure article-figure--single" id="paper-figure-27" data-figure-key="27" style="--aspect: 1.8286"><a href="media/swatches/editor-swatch-scene.png" data-enlarge data-caption="The swatch scene in my spectral path tracer."><img src="media/swatches/editor-swatch-scene.png" alt="The blue swatch scene open in my spectral path tracer, with the viewport above and rendered camera view below" width="3840" height="2100" loading="lazy" decoding="async"></a><figcaption data-paper-number="27" id="figure-caption-27">The swatch scene in my spectral path tracer.</figcaption></figure>
+<p>My swatch model is a study of the fabric's appearance, rather than a verified reconstruction of its knitting structure. I had to learn this the hard way while modelling the wool patch: it turned out to be extremely difficult to match the flattened loops around the wooden needle, the bumps in the patch and, most of all, its open edges.</p>
+<p>I am happy with the results, but in the end I spent two full days modelling and applying Kristen's professional feedback. Simulating the real, physical knitting process is a topic and a research field of its own.</p>
+</div></section><section class="article-section" aria-labelledby="the-complete-workflow-explained" data-section="07"><h2 id="the-complete-workflow-explained">The complete workflow explained</h2><div class="section-body">
+<p>A user-friendly, guided workflow was a primary objective during development.</p>
+<ol>
+<li>Import</li>
+<li>Knitting</li>
+<li>Fibres</li>
+<li>Export</li>
+</ol>
+<p>Between Import and Knitting sits an optional Mark step. It belongs to the experimental stitch-mesh route and is shown at the end of this section.</p>
+<p>The rest of this section walks through the four steps with one object: one of the teddy bears of the opening image, imported as an OBJ file and cut into 19 named pieces (body, head, snout, arms, legs, each ear as inner side, rim and outer side, and the eyes, nose and mouth threads). Every screenshot is taken from the running application, and the numbered marks match the numbered instructions next to them, so you can follow along.</p>
+<h3 id="importing-a-file">Importing a file</h3>
+<p>The knitting algorithm works best with meshes that are not too complex.</p>
+<p>That's why the Wool Shader offers two import modes:</p>
+<ol>
+<li>Rebuild the surface: voxel processing merges nearby parts and removes small details. The tool creates new UV charts and bakes the original model's base colours onto the rebuilt surface.</li>
+<li>Keep the original mesh: preserve its geometry. The default knitting needs the rebuilt surface; the original mesh is what the optional Mark step and its stitch-mesh route work on.</li>
+</ol>
+<p>The import supports base-colour textures, which can be transferred to the yarn and oriented fibres.</p>
+<p>The import is restricted to Wavefront OBJ and PLY files. Other formats need to be converted first.</p>
+<div class="tour" data-tour="import"><div class="tour-steps">
+<p><strong>Try it:</strong> the teddy is one OBJ file of 19 pieces; any OBJ or PLY works the same way.</p>
+<ol>
+<li>The whole application is the steps along the top: Import, Knit, Fibres, Export, each needing the one before it, with the optional Mark step between Import and Knit.</li>
+<li>Press <strong>Open mesh (OBJ, PLY) ...</strong> and choose the file, or drop it onto the window.</li>
+<li>Under <strong>What to make</strong>, choose <strong>Knit</strong> (Fur is the separate hair workflow).</li>
+<li>OBJ files carry no unit: the dialog suggests one from the object's size and shows width, depth and height. Here it guesses inches (a 9 cm bear); <strong>Set height</strong> gives the real size directly: 241 mm (1 file unit = 68.1 mm).</li>
+<li>Check the <strong>Up axis</strong> (Y for this file).</li>
+<li>Press <strong>Rebuild &amp; import</strong>: the components marked Knit are rebuilt in the app as one closed surface at stitch scale, with new knitting charts and the base colours baked on.</li>
+<li>The Import step turns <strong>Ready</strong> once the rebuilt surface is there; later imports of the same file come from a store.</li>
+<li>Go on with <strong>1 Knit</strong>.</li>
+</ol>
+</div><figure class="article-figure article-figure--slides article-figure--group" id="paper-figure-28" data-figure-key="28"><div class="subfig subfig--lead" style="--aspect: 2.5964"><a href="media/workflow/editor-import-empty.png" data-enlarge data-caption="The empty viewer: the steps along the top, and the Import step."><img src="media/workflow/editor-import-empty.png" alt="The empty viewer: the steps along the top, and the Import step." width="1576" height="607" loading="lazy" decoding="async"></a></div><div class="subfig-strip"><span class="strip-label" aria-hidden="true">Single renders</span><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-import-dialog.png" data-enlarge data-caption="(a) The Import dialog: Knit, size, up axis, then rebuild."><img src="media/workflow/editor-import-dialog.png" alt="The Import dialog: Knit, size, up axis, then rebuild." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.7300"><a href="media/workflow/editor-import-ready.png" data-enlarge data-caption="(b) The rebuilt surface, ready to knit."><img src="media/workflow/editor-import-ready.png" alt="The rebuilt surface, ready to knit." width="1576" height="911" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="28" id="figure-caption-28">The empty viewer: the steps along the top, and the Import step. Single renders: <span class="caption-part">(a) The Import dialog: Knit, size, up axis, then rebuild.</span> <span class="caption-part">(b) The rebuilt surface, ready to knit.</span></figcaption></figure></div>
+<h4 id="excluding-mesh-components-from-knitting">Excluding mesh components from knitting</h4>
+<p>Rebuilding can remove some of the original geometric detail. In most cases this is fine, since the removed details are smaller than the stitches.</p>
+<p>But thin parts and smooth, curved surfaces can also be affected. In the teddy bear scene, this resulted in a bumpy nose, which was unacceptable to me.</p>
+<p>For these cases, the import lets me exclude mesh components from knitting. They are listed in the import dialog, so I can choose which parts keep their original geometry and textures.</p>
+<div class="tour" data-tour="components"><div class="tour-steps">
+<p><strong>Try it:</strong> the same teddy file; each of its pieces is a component:</p>
+<ol>
+<li>Every object of the file is a component. Untick <strong>Knit</strong> on the ones that should stay as they are: here the face, at the end of the list (extra_0 to extra_5: the mouth threads, the nose and the eyes). They keep their own mesh and texture, and only the ticked components are rebuilt and knitted.</li>
+<li>After knitting, <strong>Display &gt; Unknitted parts</strong> shows or hides the components left out. The export writes them too, with their own colours. The rest of this guide keeps the face as mesh.</li>
+</ol>
+</div><figure class="article-figure article-figure--slides article-figure--group" id="paper-figure-29" data-figure-key="29"><div class="subfig-row"><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-import-components.png" data-enlarge data-caption="(a) The Import dialog&#x27;s component list: untick what should not be knitted."><img src="media/workflow/editor-import-components.png" alt="The Import dialog&#x27;s component list: untick what should not be knitted." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-teddy-plain-face.png" data-enlarge data-caption="(b) The knitted teddy, its eyes, nose and mouth left as the file&#x27;s own mesh."><img src="media/workflow/editor-teddy-plain-face.png" alt="The knitted teddy, its eyes, nose and mouth left as the file&#x27;s own mesh." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="29" id="figure-caption-29"><span class="caption-part">(a) The Import dialog&#x27;s component list: untick what should not be knitted.</span> <span class="caption-part">(b) The knitted teddy, its eyes, nose and mouth left as the file&#x27;s own mesh.</span></figcaption></figure></div>
+<h3 id="apply-the-knitting">Apply the Knitting</h3>
+<p>The Knit step offers two routes, chosen at the top of its panel:</p>
+<ul>
+<li><strong>Surface tiling</strong> (the default) knits every component of the rebuilt surface on the knitting charts the import created. The tool places the stitches row by row on those charts, joins them into yarn curves and relaxes the curves before generating the yarn geometry. Each chart's rows continue a few stitches past its border onto its neighbours, so the seams are covered by overlapping yarn instead of being sewn. The teddy below uses this route; its Final knit and fibres took about three minutes, the rebuild included.</li>
+<li><strong>Guided stitch mesh</strong> (experimental) knits one piece as a stitch mesh from its markings: the Yuksel-style route described in <a href="#placing-and-relaxing-the-loops">Placing and relaxing the loops</a>, including the solver times given there. The other pieces stay plain meshes. It is chosen from the optional Mark step (see <a href="#marking-a-piece-for-the-stitch-mesh-optional">Marking a piece for the stitch mesh</a>).</li>
+</ul>
+<p>The knitting step has two modes: Draft and Final. Draft skips the slower relaxation and some checks, so I can quickly try different settings. I can also preview fibres on a Draft knit. Export requires a Final knit, and changing the knitting means the fibres need to be generated again.</p>
+<div class="tour" data-tour="knit"><div class="tour-steps">
+<p><strong>Try it:</strong> the defaults knit the teddy as shown; the settings change yarn, stitch and look.</p>
+<ol>
+<li>Choose the yarn's <strong>Construction</strong>: a single smooth tube (fastest), real ply tubes, individual fibre strands, or fibre detail as maps on the tubes.</li>
+<li>Choose yarn and stitch size with <strong>Gauge</strong> (Dense, Medium, Thin or your own values).</li>
+<li><strong>Knit draft</strong> gives a quick look; <strong>Knit final</strong> settles the yarn and gives a result you can export.</li>
+<li><strong>Parts and checks (Report)</strong> lists every knitted part and the checks it passed or failed. A failed check never stops the workflow; it only marks the export as diagnostic.</li>
+</ol>
+</div><figure class="article-figure article-figure--slides article-figure--group" id="paper-figure-30" data-figure-key="30"><div class="subfig-row"><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-knit-settings.png" data-enlarge data-caption="(a) The Knit step: construction, gauge, then knit."><img src="media/workflow/editor-knit-settings.png" alt="The Knit step: construction, gauge, then knit." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-teddy-knitted.png" data-enlarge data-caption="(b) The knitted teddy (Final quality)."><img src="media/workflow/editor-teddy-knitted.png" alt="The knitted teddy (Final quality)." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-teddy-yarn-closeup.png" data-enlarge data-caption="(c) Close-up of the knitted yarn: every stitch is real geometry."><img src="media/workflow/editor-teddy-yarn-closeup.png" alt="Close-up of the knitted yarn: every stitch is real geometry." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><figcaption data-paper-number="30" id="figure-caption-30"><span class="caption-part">(a) The Knit step: construction, gauge, then knit.</span> <span class="caption-part">(b) The knitted teddy (Final quality).</span> <span class="caption-part">(c) Close-up of the knitted yarn: every stitch is real geometry.</span></figcaption></figure></div>
+<h3 id="create-the-fibres">Create the Fibres</h3>
+<p>The Fibres step lets me fine-tune the final result. The most relevant parameters are:</p>
+<ul>
+<li>Fibre density: candidate fibres per millimetre of yarn.</li>
+<li>Minimum, typical and maximum lengths.</li>
+<li>Thickness.</li>
+<li>Maximum deviation angles for oriented and stray fibres.</li>
+<li>Shape.</li>
+<li>Ratio between oriented and stray fibres.</li>
+</ul>
+<p>For user convenience and quick results, presets can be used which automatically adjust all underlying parameters.</p>
+<p>For quick authoring, the default mode is a small patch that shows the two fibre types as previews in different colours. Only a small set of fibres needs to be updated after each change, allowing for quick visual results.</p>
+<p>Once a good setup is found, the user can switch to the actual model and start the fibre spawning process. Depending on the fibre count, this can take a few seconds or several minutes.</p>
+<div class="tour" data-tour="fibres"><div class="tour-steps">
+<p><strong>Try it:</strong> fibres grow on the knitted yarn, so this step needs a knit.</p>
+<ol>
+<li>Pick the three presets: the <strong>Wool preset</strong> sets the look of the fibres (Standard, Soft, Fluffy, Hard wool, Mohair), the <strong>Stray preset</strong> the long loose fibres that stand off the yarn, and the <strong>Density preset</strong> (Light, Medium, Dense or your own value) how many candidate fibres start per millimetre of yarn.</li>
+<li>Every change is previewed within a second on the <strong>Reference patch</strong>, a small knitted swatch (yellow: fibres along the yarn, blue: stray fibres).</li>
+<li>Press <strong>Apply to model</strong> to grow the fibres on the whole object.</li>
+<li>Switch the preview to <strong>Model</strong> to see them on the object.</li>
+</ol>
+</div><figure class="article-figure article-figure--slides article-figure--group" id="paper-figure-31" data-figure-key="31"><div class="subfig-row"><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-fibre-reference-patch.png" data-enlarge data-caption="(a) The Fibres step: settings, previewed on a small reference patch."><img src="media/workflow/editor-fibre-reference-patch.png" alt="The Fibres step: settings, previewed on a small reference patch." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-teddy-fibres-applied.png" data-enlarge data-caption="(b) The fibres applied to the whole teddy."><img src="media/workflow/editor-teddy-fibres-applied.png" alt="The fibres applied to the whole teddy." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-teddy-fibre-closeup.png" data-enlarge data-caption="(c) Close-up of the fibres on the yarn."><img src="media/workflow/editor-teddy-fibre-closeup.png" alt="Close-up of the fibres on the yarn." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><figcaption data-paper-number="31" id="figure-caption-31"><span class="caption-part">(a) The Fibres step: settings, previewed on a small reference patch.</span> <span class="caption-part">(b) The fibres applied to the whole teddy.</span> <span class="caption-part">(c) Close-up of the fibres on the yarn.</span></figcaption></figure></div>
+<h3 id="exporting">Exporting</h3>
+<p>The last step writes the result for a renderer: a Blender file (the default when Blender is installed), a package for my own path tracer, or Wavefront OBJ. The export needs a Final knit. In the Blender file the fibres are curves next to the yarn tubes. The tessellation level trades triangle count against GPU memory, with an estimate shown before anything is written.</p>
+<div class="tour" data-tour="export"><div class="tour-steps">
+<p><strong>Try it:</strong> an export needs a Final knit.</p>
+<ol>
+<li>Choose the <strong>file format</strong>: a Blender file (the default when Blender is installed), a package for my path tracer, or Wavefront OBJ.</li>
+<li><strong>Include fibres</strong> writes the fibres with the yarn.</li>
+<li>The tessellation <strong>Level</strong> sets how many triangles the yarn tubes get; the estimate below it shows the triangles, fibre segments and GPU memory.</li>
+<li>Press <strong>Export Blender file</strong>. The destination is set further down the panel.</li>
+<li>When it is done, <strong>Open folder</strong> shows the written files: the .blend and report.json. For an imported file the folder sits next to the source file.</li>
+</ol>
+</div><figure class="article-figure article-figure--slides article-figure--group" id="paper-figure-32" data-figure-key="32"><div class="subfig-row"><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-export-settings.png" data-enlarge data-caption="(a) The Export step: format, contents, tessellation."><img src="media/workflow/editor-export-settings.png" alt="The Export step: format, contents, tessellation." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.2409"><a href="media/workflow/editor-export-complete.png" data-enlarge data-caption="(b) The export finished."><img src="media/workflow/editor-export-complete.png" alt="The export finished." width="1576" height="1270" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div></div><figcaption data-paper-number="32" id="figure-caption-32"><span class="caption-part">(a) The Export step: format, contents, tessellation.</span> <span class="caption-part">(b) The export finished.</span></figcaption></figure></div>
+<h3 id="marking-a-piece-for-the-stitch-mesh-optional">Marking a piece for the stitch mesh (optional)</h3>
+<p>This last part goes back to the teddy's import and shows the optional Mark step, which sits between Import and Knit and can be skipped. It belongs to the experimental stitch-mesh route from <a href="#placing-and-relaxing-the-loops">Placing and relaxing the loops</a>: instead of tiling a rebuilt surface with charts, one piece of the file is knitted as a stitch mesh. The mesher needs to know where the knitting starts, where it finishes and where each round begins. The markings tell it, and they are drawn on the imported file's own pieces, so nothing of the original shape is lost to the rebuild.</p>
+<p>The Mark step works on one piece of the file at a time, here the teddy's body. The panel's tools, from top to bottom:</p>
+<ul>
+<li><strong>Pieces</strong> lists the file's connected pieces. Clicking one, in the list or in the view, isolates it; <strong>Other pieces</strong> draws the rest see-through, hides it or shows it as it is.</li>
+<li><strong>Knitting component</strong> splits a piece into overlapping parts, such as a collar over a body. Each component has its own start, finish and row-start path, and lies one yarn layer outside the components before it.</li>
+<li><strong>Suggestions</strong> come from the piece's own shape. A piece with one opening is knitted like a cup, from its bottom to the opening. The teddy's body is closed, and nothing hides either end, so its suggestions start at one end and leave a small cap at the other unknitted (it lies under the head; its area is listed). Each suggestion is a card with its purpose, the reason, its limits and the estimated rows and stitches. Nothing is used until a suggestion is accepted.</li>
+<li><strong>Markings</strong> can also be drawn by hand, each with one of six meanings: <em>Start</em> (the cast-on, a closed curve around the piece), <em>Finish</em> (the bind-off), <em>Row-start path</em> (an open path from start to finish where every round begins), <em>Boundary</em> (where the covering stops), and <em>Cut</em> and <em>Attachment</em>, which are stored and drawn but not yet used by the mesher. After choosing a meaning, clicks on the piece add points; Ctrl+click selects a point, the next click moves it, and Delete removes it. Undo, Redo, Save and Open work on the markings, which are also saved automatically.</li>
+<li><strong>While drawing</strong> checks the markings within a frame or two: how many rows they give, and whether the row-start path crosses every row exactly once. Its findings say whose they are (the markings, a limit of the mesher or of the solver, or the input), and <strong>Show</strong> highlights the place on the piece.</li>
+<li><strong>Build stitch mesh</strong> lays out the rows and the stitch faces, and the view switches to <strong>Stitch Mesh</strong> by itself (the toolbar offers Markings, Rows and Stitch Mesh). The <strong>Stitch Mesh</strong> section gives a headline (faces, rows, and either "passes its checks" or the first finding), <em>Source surface</em> to show the piece under the mesh, <em>Highlight findings</em> to colour the faces by finding instead of by kind, the measured fit, coverage, boundary and structure, and <strong>Export Stitch Mesh ...</strong>, which saves the faces as OBJ in the file's own units and place. Findings never block the mesh or its export.</li>
+<li><strong>Build settings</strong> hold the Knit step's gauge (stitch width and row height); <em>Relax</em> relaxes the stitch mesh on the surface, <em>Update rows after edits</em> lets an unrelaxed layout follow every edit, and <em>Reference</em> lays the mesh out on the imported facets or on an experimental smooth surface through them.</li>
+<li><strong>Knit this piece (guided)</strong> hands the piece to the Knit step's guided route.</li>
+</ul>
+<p>On the teddy, the body, head, arms and legs give stitch meshes that pass every check. The step after it is still experimental: <strong>Knit this piece (guided)</strong> turns the body's mesh into yarn, but that yarn does not settle yet (the settle stopped at its time budget after 51 minutes), so the guide ends with the stitch mesh and its export.</p>
+<div class="tour" data-tour="mark"><div class="tour-steps">
+<p><strong>Try it:</strong> the same teddy, imported as above; the Mark step comes before the Knit step.</p>
+<ol>
+<li>Open the <strong>Mark</strong> step and click a piece, in the list or in the view, to isolate it; here the teddy's body.</li>
+<li><strong>Other pieces</strong> draws the rest see-through, hides it or shows it as it is.</li>
+<li><strong>Suggest markings for this piece</strong> derives complete markings from the piece's shape.</li>
+<li>Or draw them yourself: choose a meaning (<strong>Start</strong>, <strong>Finish</strong>, <strong>Row-start path</strong>, <strong>Boundary</strong>; <em>Cut</em> and <em>Attachment</em> are stored but not yet used), then click points on the piece.</li>
+<li>Each suggestion is a card: what it does, why, its limits and the estimated rows and stitches. The body is closed and nothing hides its ends, so the first card starts at one end and leaves a small cap at the other unknitted (under the head; its area is listed).</li>
+<li><strong>Preview</strong> lays it out without using it (here the rows), <strong>Accept</strong> takes it over as one undo step, <strong>Reject</strong> drops it, and <strong>Refine the start</strong> moves the start point after a trial layout.</li>
+<li>After <strong>Accept</strong>, press <strong>Build stitch mesh</strong>.</li>
+<li>The view switches to <strong>Stitch Mesh</strong> by itself: every stitch is one face, coloured by its kind (regular, increase, decrease, pole start).</li>
+<li>The headline gives faces and rows and the verdict: 2405 faces in 52 rows, and the mesh <strong>passes its checks</strong>.</li>
+<li>Tick <strong>Highlight findings</strong> to colour the faces by finding instead of by kind.</li>
+<li>The legend counts them: on the body all 2405 faces lie within 0.55 mm of the surface. A piece that does not fit shows its faces over the target, and over twice it, in their own colours.</li>
+<li><strong>Export Stitch Mesh ...</strong> saves the shown faces as OBJ, in the file's own units and place, one polygon per stitch.</li>
+<li>The note at the top names the file.</li>
+<li>Click the <strong>head</strong> and repeat: every piece keeps its own markings and its own mesh.</li>
+<li>Head, arms and legs pass their checks as well.</li>
+</ol>
+</div><figure class="article-figure article-figure--slides article-figure--group" id="paper-figure-33" data-figure-key="33"><div class="subfig-row"><div class="subfig" style="--aspect: 1.0795"><a href="media/workflow/editor-mark-pieces.png" data-enlarge data-caption="(a) The Mark step: isolate a piece, then suggest or draw its markings."><img src="media/workflow/editor-mark-pieces.png" alt="The Mark step: isolate a piece, then suggest or draw its markings." width="1576" height="1460" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" style="--aspect: 1.0795"><a href="media/workflow/editor-mark-suggestion.png" data-enlarge data-caption="(b) A suggestion for the body, previewed as rows."><img src="media/workflow/editor-mark-suggestion.png" alt="A suggestion for the body, previewed as rows." width="1576" height="1460" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" style="--aspect: 1.0795"><a href="media/workflow/editor-mark-stitch-mesh.png" data-enlarge data-caption="(c) Build stitch mesh: the view switches to the Stitch Mesh by itself."><img src="media/workflow/editor-mark-stitch-mesh.png" alt="Build stitch mesh: the view switches to the Stitch Mesh by itself." width="1576" height="1460" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div></div><div class="subfig-row"><div class="subfig" style="--aspect: 1.0795"><a href="media/workflow/editor-mark-findings.png" data-enlarge data-caption="(d) Highlight findings: every face within the fit target."><img src="media/workflow/editor-mark-findings.png" alt="Highlight findings: every face within the fit target." width="1576" height="1460" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(d)</span></div><div class="subfig" style="--aspect: 1.0795"><a href="media/workflow/editor-mark-export.png" data-enlarge data-caption="(e) Export Stitch Mesh: the mesh as an OBJ file."><img src="media/workflow/editor-mark-export.png" alt="Export Stitch Mesh: the mesh as an OBJ file." width="1576" height="1460" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(e)</span></div><div class="subfig" style="--aspect: 1.0795"><a href="media/workflow/editor-mark-head.png" data-enlarge data-caption="(f) The head, the next piece: its own stitch mesh, also passing."><img src="media/workflow/editor-mark-head.png" alt="The head, the next piece: its own stitch mesh, also passing." width="1576" height="1460" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(f)</span></div></div><figcaption data-paper-number="33" id="figure-caption-33"><span class="caption-part">(a) The Mark step: isolate a piece, then suggest or draw its markings.</span> <span class="caption-part">(b) A suggestion for the body, previewed as rows.</span> <span class="caption-part">(c) Build stitch mesh: the view switches to the Stitch Mesh by itself.</span> <span class="caption-part">(d) Highlight findings: every face within the fit target.</span> <span class="caption-part">(e) Export Stitch Mesh: the mesh as an OBJ file.</span> <span class="caption-part">(f) The head, the next piece: its own stitch mesh, also passing.</span></figcaption></figure></div>
+</div></section><section class="article-section" aria-labelledby="limitations-cost" data-section="08"><h2 id="limitations-cost">Limitations &amp; Cost</h2><div class="section-body">
+<p>This approach is mainly useful for close-ups, where normal maps and other traditional texturing techniques can no longer reproduce all the visible detail.</p>
+<p>Normal maps cannot change the silhouette or create real gaps between yarns. Displacement can help, but even that does not easily reproduce individual knitted loops and loose fibres.</p>
+<p>From farther away, most of this detail becomes too small to see. At that point, normal maps and a simple sheen model may produce a very similar result at a fraction of the memory cost.</p>
+<p>There is no fixed distance where one approach becomes better than the other. It depends on the lighting, image resolution and how large the details appear on screen.</p>
+<p>In my teddy scene, much of the memory cost came from the OptiX acceleration structures, rather than the fibre data alone. This made the number of fibre segments an important limit.</p>
+<p>The main challenge is therefore not just storing the fibre geometry, but building acceleration structures that can trace it efficiently.</p>
+</div></section><section class="article-section" aria-labelledby="future-improvements" data-section="09"><h2 id="future-improvements">Future improvements</h2><div class="section-body">
+<p>I have many ideas, but limited time!</p>
+<ul>
+<li>Better deformation of yarns and plies, especially where they press against each other or the underlying surface. The tool already approximates contact flattening for single yarn tubes, but geometric plies still remain round.</li>
+<li>More memory-efficient fibre rendering.</li>
+<li>Intuitive authoring and editing of wool surfaces.</li>
+<li>Add the effect of gravity on long fibres. Self-intersection. Clumping and grouping</li>
+<li>Improve how fibre placement depends on the curvature of the yarn.</li>
+<li>Make fibres form small clumps that bend in the same direction, in addition to the existing fibre islands.</li>
+<li>Create a fibre profile based on photographs of real wool.</li>
+<li>re-use baked-in fibre textures instead of mapping each strand. This will reduce texture size significantly. </li>
+</ul>
+</div></section><section class="article-section" aria-labelledby="conclusion" data-section="10"><h2 id="conclusion">Conclusion</h2><div class="section-body">
+<p>What I originally planned as a weekend project turned out to be far more challenging—and interesting—than I expected.</p>
+<p>The knitted yarn itself was only part of the problem. Getting the fine fibres right, making them look convincing and handling all that geometry efficiently turned out to be just as important.</p>
+<p>For close-up renders, I think the extra detail is worth the cost. Would I recommend this approach for every wool surface in a scene? Definitely not. From a distance, much simpler techniques can produce very similar results.</p>
+</div></section><section class="article-section" aria-labelledby="appendix-knitted-sweater" data-section="11"><h2 id="appendix-knitted-sweater">Appendix: Knitted sweater</h2><div class="section-body">
+<figure class="article-figure article-figure--group article-figure--slides" id="paper-figure-34" data-figure-key="34"><div class="subfig-row"><div class="subfig" data-slide-label="Overview" style="--aspect: 1.0000"><a href="media/sweater/yellow-sweater.png" data-enlarge data-caption="(a) The knitted sweater."><img src="media/sweater/yellow-sweater.png" alt="A yellow knitted sweater, showing the full garment with its ribbed collar, hem and cuffs" width="2048" height="2048" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(a)</span></div><div class="subfig" data-slide-label="Shoulder" style="--aspect: 1.0000"><a href="media/sweater/yellow-sweater-shoulder.png" data-enlarge data-caption="(b) The shoulder and upper sleeve."><img src="media/sweater/yellow-sweater-shoulder.png" alt="Close-up of the yellow sweater&#x27;s shoulder and upper sleeve" width="2048" height="2048" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(b)</span></div><div class="subfig" data-slide-label="Sleeve" style="--aspect: 1.0000"><a href="media/sweater/yellow-sweater-sleeve-and-hem.png" data-enlarge data-caption="(c) The sleeve and ribbed hem."><img src="media/sweater/yellow-sweater-sleeve-and-hem.png" alt="The yellow sweater&#x27;s sleeve and ribbed hem, with fine fibres along the silhouette" width="2048" height="2048" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(c)</span></div><div class="subfig" data-slide-label="Cuff" style="--aspect: 1.0000"><a href="media/sweater/yellow-sweater-cuff-closeup.png" data-enlarge data-caption="(d) The ribbed cuff in close-up."><img src="media/sweater/yellow-sweater-cuff-closeup.png" alt="Close-up of the yellow sweater&#x27;s ribbed cuff, showing the yarn and loose fibres" width="2048" height="2048" loading="lazy" decoding="async"></a><span class="subfig-label" aria-hidden="true">(d)</span></div></div><figcaption data-paper-number="34" id="figure-caption-34"><span class="caption-part">(a) The knitted sweater.</span> <span class="caption-part">(b) The shoulder and upper sleeve.</span> <span class="caption-part">(c) The sleeve and ribbed hem.</span> <span class="caption-part">(d) The ribbed cuff in close-up.</span></figcaption></figure>
+</div></section><section class="article-section article-section--unnumbered" aria-labelledby="image-and-video-credits" data-section="12"><h2 id="image-and-video-credits">Image and Video Credits</h2><div class="section-body">
+<p>This article has supporters. I am grateful to all of them and appreciate their encouragement and help a lot.</p>
+<p>The reference photographs in “Comparing with a real photograph” are by <strong>Kristen McDonnell of <a href="https://www.studioknitsf.com/">Studio Knit</a></strong>, from her <a href="https://www.studioknitsf.com/knitting-lessons-stockinette-stitch/">Stockinette Stitch tutorial</a>. The angled blue photograph is reproduced unaltered with permission for this article. The blue top-down working reference is a supplied crop; the cream photograph is shown in full. Her photographs remain her original work. My computer-generated work is separate; her permission does not constitute endorsement, verification or approval of my renders or this article, or a licence to redistribute her photographs separately or in a Blender file.</p>
+<p>The teddy renders and the workflow screenshots are based on <a href="https://sketchfab.com/3d-models/teddy-bears-e84b12b4ac20402aaf4d40f2219cd0e2">"Teddy bears"</a> by <a href="https://sketchfab.com/hectopod">hectopod</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. I modified the model: the knitting and fibres were generated with the Wool Shader, and the materials were added. See the <a href="https://sketchfab.com/3d-models/teddy-bears-e84b12b4ac20402aaf4d40f2219cd0e2">asset credits</a> for the source model and modifications.</p>
+<p>The room behind the bears in the opening render, the renderer screenshot and the fibre rendering comparison is the <a href="https://gum.co/urfLv">"Watercolor room interior scene"</a> by Angelo Ferretti (<a href="https://www.lucydreams.it/shop/">Lucy Dreams</a>), purchased on 2026-10-12 under the <a href="https://www.lucydreams.it/shop/eula-license/">Lucy Dreams EULA</a>. Angelo Ferretti gave me written permission to use the scene in this article and its accompanying videos. These uses do not imply that he endorses this work. His article/video permission does not authorise redistribution of scene assets. No Watercolor scene files, textures, materials or HDRIs are included as downloads.</p>
+<p>The cream swatch scene in the <a href="#quick-start">Quick Start</a> is my own work, licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>. It uses the CC0 HDRI <a href="https://polyhaven.com/a/wooden_studio_04">"Wooden Studio 04"</a> by Alexander Scholten (Poly Haven) and the CC0 texture <a href="https://ambientcg.com/view?id=Wood005">"Wood005"</a> (ambientCG). Kristen McDonnell's photographs served as a visual reference only. They are not included, and she has not endorsed, verified or approved the file.</p>
+<p>The images and videos here are not covered by the repository's MIT License. Permissions obtained for this article do not grant readers a reuse licence to third-party work. Applicable third-party licences and statutory exceptions remain in effect. See the <a href="#image-and-video-credits">media licence</a>.</p>
+<p>Attribution and licences are provided in good faith. If you are a rights holder and have a concern about any asset used here, please contact drnicolasmenzel@gmail.com.</p>
+<p>I modified all of these models: the knitting and fibres were generated with the Wool Shader. Their authors do not endorse this work.</p></div></section></article>
+      </div>
+    </main>
+    <footer class="site-footer"><div><p>Wool Shader<br><span>Geometry, fibres &amp; light.</span></p></div>
+      <nav aria-label="Project links"><a href="https://github.com/nicolasgfx/woolshader">Source code &#8599;</a><a href="https://github.com/nicolasgfx/Portfolio">Rendering portfolio &#8599;</a><a href="#top">Back to top &#8593;</a></nav>
+    </footer>
+  </div>
+  <dialog class="image-dialog" aria-label="Enlarged article image">
+    <button class="close-image" type="button" aria-label="Close enlarged image">Close <span aria-hidden="true">&#215;</span></button>
+    <img alt="">
+    <div class="dialog-bar">
+      <button type="button" class="dialog-step" data-dialog-prev aria-label="Previous image in this figure">&#8592;</button>
+      <p class="dialog-caption"></p>
+      <span class="dialog-count" aria-live="polite"></span>
+      <button type="button" class="dialog-step" data-dialog-next aria-label="Next image in this figure">&#8594;</button>
+    </div>
+  </dialog>
+</body>
+</html>
