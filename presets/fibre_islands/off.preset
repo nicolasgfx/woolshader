@@ -1,0 +1,15 @@
+knit-preset v1
+# Fibre island preset "Off" (knit_viewer: step 2 Fibres, Fibre islands).
+#
+# Patches where the fuzz differs from the even fuzz around them. Edit the values and restart the
+# viewer; copy the file (new name and id) to add a preset. The lowest `order` comes first in the list.
+id = off
+label = Off
+order = 1
+note = Even fuzz everywhere.
+fibres.islands.rate = 0
+fibres.islands.size = 12
+fibres.islands.strength = 0
+fibres.islands.fuzzy = 1
+fibres.islands.matted = 1
+fibres.islands.worn = 1

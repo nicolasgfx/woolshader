@@ -1,0 +1,37 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "Release (external build next to the checkout)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceParentDir}/${sourceDirName}-build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "KNIT_BUILD_TESTS": "ON",
+        "KNIT_BUILD_VIEWER": "ON"
+      }
+    },
+    {
+      "name": "nogui",
+      "inherits": "release",
+      "displayName": "Release without the viewer (no GLFW or ImGui download)",
+      "binaryDir": "${sourceParentDir}/${sourceDirName}-build/nogui",
+      "cacheVariables": { "KNIT_BUILD_VIEWER": "OFF" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "release", "configurePreset": "release" },
+    { "name": "nogui", "configurePreset": "nogui" }
+  ],
+  "testPresets": [
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "output": { "outputOnFailure": true },
+      "execution": { "timeout": 1500 }
+    }
+  ]
+}

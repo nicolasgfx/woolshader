@@ -1,0 +1,14 @@
+knit-preset v1
+# Wool density preset "Dense" (knit_viewer: step 2 Fibres, Fibre setup, "Density").
+#
+# How many fibre candidates grow per millimetre of yarn; some are rejected (inside the object,
+# colliding), so fewer remain. Edit the value and restart the viewer; copy the file (new name and id)
+# to add a preset. The lowest `order` comes first in the list. Bounds: 1..300 per mm.
+# New objects use 125 (the settings' default), whatever this file says. The segment budget (Export
+# detail level) may drop whole fibres at high densities.
+id = dense
+label = Dense
+order = 3
+note = 125 candidates per mm (the default): the teddy renders' density; fits the Full export's 14 M segment budget with every wool preset (Reduced and Light drop fibres).
+
+fibres.density = 125

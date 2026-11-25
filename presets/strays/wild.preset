@@ -1,0 +1,20 @@
+knit-preset v1
+# Stray preset "Wild" (knit_viewer: step 2 Fibres, "Stray preset").
+#
+# How far the stray fibres deviate from the yarn, in direction and in length. Every wool preset
+# names one (strays = <id> in presets/fibres) and applies it; choosing another here keeps the wool
+# preset. Edit the values and restart the viewer; copy the file (new name and id) to add a kind.
+# The lowest `order` comes first in the list.
+#
+#   spread_deg      seen from above the yarn, how far a stray's start turns away from the yarn's
+#                   direction (5..180; 180: any direction around the yarn)
+#   max_angle_deg   a stray rises between 20 deg (fixed) and this angle above the surface
+#   length_spread   the log-normal spread (sigma) of the stray lengths around the typical length;
+#                   the wool preset keeps the lengths themselves (min / typical / max)
+id = wild
+label = Wild
+order = 6
+note = Strays in any direction, rising up to 60 deg, with very uneven lengths.
+fibres.random.spread_deg = 180
+fibres.random.max_angle_deg = 60
+fibres.random.length_spread = 0.9

@@ -1,0 +1,17 @@
+knit-preset v1
+# Yarn tessellation level "Coarse" (knit_viewer: step 1 Knit, Build settings, "Yarn tessellation").
+#
+# The yarn's polygon tube, drawn by the viewer and written by the export; fibre roots are placed in
+# it. Edit the values and restart the viewer; copy the file (new name and id) to add a level. The
+# lowest `order` comes first in the list. Bounds: 3..64 sides, 0.05..2 mm ring spacing.
+#   strand.tube_sides / strand.tube_ring [mm]          the single yarn tube
+#   strand.ply_tube_sides / strand.ply_tube_ring [mm]  each ply (explicit plies only)
+id = coarse
+label = Coarse
+order = 1
+note = 6 sides, a ring every 0.8 mm: light, visibly faceted up close.
+
+strand.tube_sides = 6
+strand.tube_ring = 0.8
+strand.ply_tube_sides = 4
+strand.ply_tube_ring = 0.6

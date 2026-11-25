@@ -1,0 +1,82 @@
+knit-preset v1
+# Wool profile "Standard wool" (knit_viewer: step 2 Fibres, "Wool preset").
+#
+# Edit the values below and restart the viewer. Copy this file under a new name (and a new id)
+# to add a profile; delete it to remove one. The profile with the lowest `order` is the default for
+# new objects. A file that leaves out a value, adds another key or holds a value the fibre
+# generator refuses is not loaded: the Fibres step says which file and why.
+#
+# A profile sets the fibres and the wool look they are exported with; the yarn colour and the
+# Density control stay yours.
+#
+# directed = fibres along the yarn (the yarn's fuzz); random = stray fibres.
+#   random_fraction    share of the candidates that are stray fibres (0..1)
+#   max_segments       most straight pieces per fibre (2..48; long fibres need more to stay smooth)
+#   segment_length [mm] length of one straight piece (more fibres for the same budget when longer)
+#   length_min / median / max [mm]   log-normal lengths, cut at min and max (min <= median <= max)
+#   length_spread      directed only: log-normal sigma of the length (the strays': their stray preset)
+#   thickness [mm]     fibre diameter (median); thickness_sigma: its log-normal spread
+#   curvature          directed: bow scale (1 = the default bow); random: bend amplitude
+#   max_angle_deg      directed only: largest lift off the yarn (>= 12)
+#   drape              directed only: true = a fuzz fibre that reaches a neighbouring stitch rests on it
+#                      and lifts over it instead of being cut there (light fibre checks only)
+#   strays             the stray preset applied with this profile (presets/strays): how far the
+#                      strays deviate from the yarn, in direction and in length
+#   curl_radius [mm]   random only: how far a stray winds around its line (0 = no curl)
+#   curl_length [mm]   random only: fibre length of one turn of the curl
+#   tail_taper         0: every fibre narrows along its whole length (the renderer's tip_scale 0.2).
+#                      > 0: a fibre keeps its thickness and narrows to a fine tip over its last
+#                      tail_taper of length, but over at least tail_taper_min_diameters diameters
+#                      (a thick fibre needs room to narrow); tail_taper_tip: the tip over the root.
+#                      A tapered profile states a thinner thickness, so its fibres cover what
+#                      untapered ones would.
+#   crimp_amplitude / crimp_wavelength [mm]   a wave along the fuzz fibres (0 = straight); needs a
+#                      short segment_length (about wavelength / 10)
+# strand.normal_strength: depth of the yarn's ply relief in the render (1 = as built; lower = softer).
+# material.yarn_white.translucency: share of the yarn's light that passes through it, scattered
+#   (0 = opaque); a backlit yarn glows, the front reads a little darker. Renderer fabric only.
+# material.fibre_directed.model: the yarn fuzz's shading, diffuse-sheen or fibre (a hair BSDF).
+# material.fibre_directed.fibre_longitudinal_roughness: how far a hair spreads its shine (higher = more matte).
+# material.fibre_hair_colour: the fuzz's hair colour from the yarn; layer (a thin fuzz layer over the
+#   yarn) or yarn (a dense coat that keeps the yarn's colour). Strays take the yarn's colour either way.
+
+id = standard
+label = Standard wool
+order = 2
+note = A dense hair coat in the yarn's colour, matte and soft; a few short, slightly curled strays: the stitches stay in front. Opaque yarn, fibres narrowing along their whole length.
+strays = loose
+
+fibres.random_fraction = 0.03
+fibres.max_segments = 24
+fibres.segment_length = 0.8
+
+fibres.directed.length_min = 1.2
+fibres.directed.length_median = 2.6
+fibres.directed.length_max = 5.0
+fibres.directed.length_spread = 0.35
+fibres.directed.thickness = 0.08
+fibres.directed.thickness_sigma = 0.04
+fibres.directed.curvature = 1.0
+fibres.directed.max_angle_deg = 30
+fibres.directed.drape = false
+
+fibres.random.length_min = 1.2
+fibres.random.length_median = 2.5
+fibres.random.length_max = 6.0
+fibres.random.thickness = 0.045
+fibres.random.thickness_sigma = 0.08
+fibres.random.curvature = 0.4
+fibres.random.curl_radius = 0.5
+fibres.random.curl_length = 6
+
+fibres.tail_taper = 0
+fibres.tail_taper_min_diameters = 8
+fibres.tail_taper_tip = 0.1
+fibres.crimp_amplitude = 0
+fibres.crimp_wavelength = 1.5
+
+strand.normal_strength = 1
+material.yarn_white.translucency = 0
+material.fibre_directed.model = fibre
+material.fibre_directed.fibre_longitudinal_roughness = 0.45
+material.fibre_hair_colour = yarn

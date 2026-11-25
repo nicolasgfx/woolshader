@@ -1,0 +1,18 @@
+knit-preset v1
+# Hand-knit preset "Rustic" (knit_viewer: step 1 Knit, Hand-made look).
+#
+# How unevenly the stitches are knitted. Edit the values and restart the viewer; copy the file (new
+# name and id) to add a preset. The lowest `order` comes first in the list.
+id = rustic
+label = Rustic
+order = 4
+note = A loose, uneven knit. A few stitches may fail the crossing check.
+knit.hand.unevenness = 32
+knit.hand.column_shift = 1.0
+knit.hand.column_rows = 5
+knit.hand.loop_rate = 0.7
+knit.hand.loop_height = 1.1
+knit.hand.wave_height = 0.4
+knit.hand.spot_rate = 0.8
+knit.hand.spot_change = 40
+knit.hand.spot_length = 16

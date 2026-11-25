@@ -1,0 +1,5 @@
+# Byte-exact test fixtures: never convert line endings (compared byte for byte).
+tests/data/*.txt -text
+tests/data/wrap_golden/**/*.obj -text
+# Models: binary.
+*.glb binary

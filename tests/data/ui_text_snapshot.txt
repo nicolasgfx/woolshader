@@ -1,0 +1,2709 @@
+### wool-swatch / opened / Import
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+--- Object
+Wool swatch on a needle (12 cm)
+Example scene: imported with a fixed size and mesh selection.
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0.
+--- Components
+1 of 2 with yarn or fur, fixed by the example
+swatch 112,024 triangles [x] Knit
+needle 46,976 triangles [ ] Keep mesh
+Unticked components keep their mesh and textures.
+--- What to make
+[ Knit ] [ Fur ]
+[ Open mesh (OBJ, PLY) ... ]
+Or drop an OBJ or PLY file anywhere in the window. Limits: 200 MB of mesh data (textures not counted), 200 components, 2 million triangles.
+--- Examples
+[ Wool swatch on a needle (12 cm) ]
+[ Blue wool swatch on a needle (12 cm) ]
+--- Method
+Knitting follows each flattened surface piece (UV chart) of the mesh with a regular lattice of stitches. Each chart's rows continue a few stitches past its border onto its neighbours, so the seams are covered by overlapping yarn (Seams: Overlapped); the seams are not sewn and the stitch count does not shape the fabric. Every import and example is knitted this way except the teddy: it is knitted as spiral pieces (one closed spiral per body part, shaped by increases and decreases). This is the project's own method, not Stitch Mesh / Stitch Meshing.
+An opened mesh is first rebuilt as one closed surface at stitch scale, with few wide charts and its base colours baked onto them, so that any model can be knitted. Components left unticked stay as the file has them.
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Wool swatch on a needle (12 cm) Nothing to show yet: knit to build the scene - not knitted yet
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Knit swatch  [disabled]
+Knit needle  [disabled]
+Knit
+Fur
+Open mesh (OBJ, PLY) ...  [disabled]
+Wool swatch on a needle (12 cm)
+Blue wool swatch on a needle (12 cm)
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch / opened / Mark
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Mark
+Markings for the stitch mesher (optional): where knitting starts and finishes, and where each round begins.
+Markings are drawn on an imported file's pieces: import a file (Import).
+[ Markings ] [ Rows ] [ Stitch Mesh ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Wool swatch on a needle (12 cm) The Mark step works on an imported file
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##viewToolbar
+Markings  [disabled]
+Rows  [disabled]
+Stitch Mesh  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch / opened / Knit
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Knit
+Wool swatch on a needle (12 cm) · Example · applies to every part
+Construction
+Single tube
+One smooth tube · fastest Ply tubes
+Real ply geometry · close-ups
+Fibre strands
+Individual fibres · detailed close-ups Fibre maps
+Fibre detail on tubes · lower render cost
+One validated tube per yarn (the main workflow). Its plies can be shown by the ply texture (below: maps on the tube, no geometry).
+| Ply texture (?) | { 2 plies } |
+Ply style
+(x) Swept plies
+( ) Circles
+The maps' cross-section of the plies (not the tube geometry).
+Yarn & stitch size Custom
+| Yarn diameter | { 1.93 mm } |
+| Gauge (?) | { Custom } |
+| Stitch width | { 5.50 mm } |
+| Row height | { 3.95 mm } |
+18.2 stitches × 25.3 rows / 10 cm
+> Gauge & yarn geometry 0.80 D · 0.10 mm clearance · contact flattening
+    [x] Flatten yarn that is too thick for the stitch
+    The stitch is too tight for a round 1.93 mm yarn: knitted at a 1.16 mm contact diameter (yarn compressed to 60 %) and drawn at 1.93 mm, flattened where yarns touch.
+    | Depth | { 0.80 D } |
+    | Clearance | { 0.10 mm } |
+    [x] Contact flattening
+    | Inflation | { 0.35 } |
+    | Max flattening (?) | { 40 % } |
+Stitch pattern
+Stockinette
+Knit V shapes on the front · the plain fabric Reverse stockinette
+Purl bumps on the front · inside out
+Garter
+Ridges on both faces · shorter rows Rib 1 x 1
+Knit and purl columns · narrow, stretchy
+Knit stitches (V shapes) on the front, purl bumps on the back.
+Checking the pattern on a flat swatch ... (?)
+Stitch character Custom
+Off Natural Hand-made Rustic
+Your own values (Fine-tune character).
+> Fine-tune character 20 % uneven · 0.60 raised loops / cm2 · 0.80 spots / cm2
+    | Uneven stitches (?) | { 20% } |
+    | Column shift (?) | { 0.80 mm } |
+    | Column run (?) | { 5 rows } |
+    | Raised loops (?) | { 0.60 / cm2 } |
+    | Loop height (?) | { 1.00 mm } |
+    | Thick and thin spots (?) | { 0.80 / cm2 } |
+    | Spot strength (?) | { 25% } |
+    | Spot length (?) | { 16 mm } |
+    | Fabric wave (?) | { 0.50 mm } |
+    | Variation (?) | { 1 } |
+    Knit draft moves the stitches. The yarn settles into them at Knit final.
+Yarn colour
+| Source | { From the object } |
+One colour per part, from the object. Patterns inside a part are not knitted.
+Details
+> Stitch layout Overlapped seams · 0 deg
+    | Seams (?) | { Overlapped } |
+    | Row direction | { 0 deg } |
+> Mesh detail Reduced
+    | Yarn tessellation (?) | { Reduced } |
+    Changing it rebuilds the yarn tubes from the knit (no knitting). Generate fibres again so their roots match.
+--------------------------------
+Not knitted export needs Final
+[ Knit draft ] [ Knit final ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Wool swatch on a needle (12 cm) Nothing to show yet: knit to build the scene - not knitted yet
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Single tube
+Ply tubes
+Fibre strands
+Fibre maps
+##Ply texture
+Swept plies
+Circles
+##Yarn diameter
+##Gauge
+##Stitch width
+##Row height
+Gauge & yarn geometry
+Flatten yarn that is too thick for the stitch
+##Depth
+##Clearance
+Contact flattening
+##Inflation
+##Max flattening
+Stockinette
+Reverse stockinette
+Garter
+Rib 1 x 1
+Off
+Natural
+Hand-made
+Rustic
+Fine-tune character
+##Uneven stitches
+##Column shift
+##Column run
+##Raised loops
+##Loop height
+##Thick and thin spots
+##Spot strength
+##Spot length
+##Fabric wave
+##Variation
+##Yarn colour
+Stitch layout
+##Seams
+##Row direction
+Mesh detail
+##Yarn tessellation
+Workflow/##knitStatus_C7B68FDF
+Knit draft
+Knit final
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch / opened / Fibres
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Fibre settings
+Wool on knitted yarn · applies to the whole object
+--- Fibre setup
+| Wool preset (?) | { Custom } |
+| Stray preset (?) | { Custom } |
+| Density preset (?) | { Custom } |
+--- Coverage
+| Density (?) | { 350 / mm } |
+| Stray fibres (?) | { 3% } |
+--- Fibre islands
+| Island preset (?) | { Off } |
+| Islands (?) | { 0.00 / cm2 } |
+| Island size (?) | { 12 mm } |
+| Island strength (?) | { 0% } |
+| Fuzzy share (?) | { 1.0 } |
+| Matted share (?) | { 1.0 } |
+| Worn share (?) | { 1.0 } |
+--- Fibre shape & appearance
+/ Yarn fuzz 97% \
+Short fibre ends that follow the yarn.
+Length · mm (?)
+| Minimum | Typical | Maximum |
+| { 0.60 } | { 1.50 } | { 3.00 } |
+| Length spread (?) | { 0.35 } |
+Thickness · mm (?)
+| Minimum | Maximum |
+| { 0.033 } | { 0.039 } |
+| Bow (?) | { 1.00 } |
+| Max lift angle (?) | { 30 deg } |
+| Hug height (?) | { 0.15 } |
+| Lie on the stitches (?) | [ ] |
+> Appearance
+    [x] Match yarn colour
+    | Shading (?) | { Hair (fibre) shading } |
+    | Roughness along | { 0.45 } |
+    | Roughness around | { 0.60 } |
+    | IOR (?) | { 1.40 } | / Stray fibres 3% \
+> Generation details
+    | Segment budget (?) | { 7000000 } |
+    | More at curved yarn | { 0.00 } |
+    | Segments per fibre (?) | { 48 } |
+    | Segment length · mm (?) | { 0.45 } |
+    | Generation (?) | { Budget order (only what the budget keeps) } |
+--------------------------------
+Fibres Knit first
+Fibres grow on a knitted result that matches the current knitting settings.
+Export: included, generate the fibres first
+[ Knit first ]
+Preview target [ Reference patch ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Wool swatch on a needle (12 cm) Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Wool preset
+##Stray preset
+##Density preset
+##Density
+##Stray fibres
+##Island preset
+##Islands
+##Island size
+##Island strength
+##Fuzzy share
+##Matted share
+##Worn share
+Yarn fuzz 97%###fuzz
+##Shortest
+##Typical
+##Longest
+##Length spread
+##Thinnest
+##Thickest
+##Bow
+##Max lift angle
+##Hug height
+##Lie on the stitches
+Appearance
+Match yarn colour
+##Shading
+##Roughness along
+##Roughness around
+##IOR
+Stray fibres 3%###stray
+Generation details
+##Segment budget
+##More at curved yarn
+##Segments per fibre
+##Segment length
+##Generation
+Workflow/##fibreStatus_E37A042A
+Knit first
+##viewToolbar
+Reference patch
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch / opened / Export
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Export settings
+Wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+Meshes, optional fibres, ply maps and report.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+--- Contents
+| [x] Include fibres | Requested: generate them (Fibres) |
+| [x] Filling |
+Colour |
+| Unknitted parts (?) | { Texture } |
+Unknitted parts are always written, also when hidden in the view; this chooses their colour.
+--- Tessellation
+| Level (?) | { Reduced } |
+Estimate: triangles: knit first, <= 7.0 M fibre segments per object
+Sets the Knit step's Yarn tessellation to Reduced and at most 7.0 M fibre segments.
+Changes tessellation, not knit quality.
+Changing the level means generating the fibres again.
+--- Destination
+Output folder [ Choose folder ... ]
+<tmp>wool-swatch_knit
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Final knit required
+There is no knitted result yet.
+[ Knit at Final quality ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Wool swatch on a needle (12 cm) Nothing to show yet: knit to build the scene - not knitted yet
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+Include fibres
+Filling
+Colour
+##Unknitted parts
+##Level
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Knit at Final quality
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+--- View popover
+##Popup_857513a5
+3/4 view
+Front
+Side
+Top
+Back
+Upright
+### wool-swatch / Final knit / Knit
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Not generated 3  Export Needs fibres
+Knit
+Wool swatch on a needle (12 cm) · Example · applies to every part
+Construction
+Single tube
+One smooth tube · fastest Ply tubes
+Real ply geometry · close-ups
+Fibre strands
+Individual fibres · detailed close-ups Fibre maps
+Fibre detail on tubes · lower render cost
+One validated tube per yarn (the main workflow). Its plies can be shown by the ply texture (below: maps on the tube, no geometry).
+| Ply texture (?) | { 2 plies } |
+Ply style
+(x) Swept plies
+( ) Circles
+The maps' cross-section of the plies (not the tube geometry).
+Yarn & stitch size Custom
+| Yarn diameter | { 1.93 mm } |
+| Gauge (?) | { Custom } |
+| Stitch width | { 5.50 mm } |
+| Row height | { 3.95 mm } |
+18.2 stitches × 25.3 rows / 10 cm
+> Gauge & yarn geometry 0.80 D · 0.10 mm clearance · contact flattening
+    [x] Flatten yarn that is too thick for the stitch
+    The stitch is too tight for a round 1.93 mm yarn: knitted at a 1.16 mm contact diameter (yarn compressed to 60 %) and drawn at 1.93 mm, flattened where yarns touch.
+    | Depth | { 0.80 D } |
+    | Clearance | { 0.10 mm } |
+    [x] Contact flattening
+    | Inflation | { 0.35 } |
+    | Max flattening (?) | { 40 % } |
+Stitch pattern
+Stockinette
+Knit V shapes on the front · the plain fabric Reverse stockinette
+Purl bumps on the front · inside out
+Garter
+Ridges on both faces · shorter rows Rib 1 x 1
+Knit and purl columns · narrow, stretchy
+Knit stitches (V shapes) on the front, purl bumps on the back.
+Checking the pattern on a flat swatch ... (?)
+Stitch character Custom
+Off Natural Hand-made Rustic
+Your own values (Fine-tune character).
+> Fine-tune character 20 % uneven · 0.60 raised loops / cm2 · 0.80 spots / cm2
+    | Uneven stitches (?) | { 20% } |
+    | Column shift (?) | { 0.80 mm } |
+    | Column run (?) | { 5 rows } |
+    | Raised loops (?) | { 0.60 / cm2 } |
+    | Loop height (?) | { 1.00 mm } |
+    | Thick and thin spots (?) | { 0.80 / cm2 } |
+    | Spot strength (?) | { 25% } |
+    | Spot length (?) | { 16 mm } |
+    | Fabric wave (?) | { 0.50 mm } |
+    | Variation (?) | { 1 } |
+    Knit draft moves the stitches. The yarn settles into them at Knit final.
+Yarn colour
+| Source | { From the object } |
+One colour per part, from the object. Patterns inside a part are not knitted.
+Details
+> Stitch layout Overlapped seams · 0 deg
+    | Seams (?) | { Overlapped } |
+    | Row direction | { 0 deg } |
+> Mesh detail Reduced
+    | Yarn tessellation (?) | { Reduced } |
+    Changing it rebuilds the yarn tubes from the knit (no knitting). Generate fibres again so their roots match.
+--------------------------------
+Final #1: 4 parts, 4 PASS
+[ Knit draft ] [ Knit final ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 3 triangles
+Wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Knitted result #1 - Final - 4 PASS
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Single tube
+Ply tubes
+Fibre strands
+Fibre maps
+##Ply texture
+Swept plies
+Circles
+##Yarn diameter
+##Gauge
+##Stitch width
+##Row height
+Gauge & yarn geometry
+Flatten yarn that is too thick for the stitch
+##Depth
+##Clearance
+Contact flattening
+##Inflation
+##Max flattening
+Stockinette
+Reverse stockinette
+Garter
+Rib 1 x 1
+Off
+Natural
+Hand-made
+Rustic
+Fine-tune character
+##Uneven stitches
+##Column shift
+##Column run
+##Raised loops
+##Loop height
+##Thick and thin spots
+##Spot strength
+##Spot length
+##Fabric wave
+##Variation
+##Yarn colour
+Stitch layout
+##Seams
+##Row direction
+Mesh detail
+##Yarn tessellation
+Workflow/##knitStatus_C7B68FDF
+Knit draft
+Knit final
+##viewToolbar
+Source
+Knit
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Ply texture
+Compare with source  [disabled]
+### wool-swatch / Final knit / Fibres
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Not generated 3  Export Needs fibres
+Fibre settings
+Wool on knitted yarn · applies to the whole object
+--- Fibre setup
+| Wool preset (?) | { Custom } |
+| Stray preset (?) | { Custom } |
+| Density preset (?) | { Custom } |
+--- Coverage
+| Density (?) | { 350 / mm } |
+| Stray fibres (?) | { 3% } |
+--- Fibre islands
+| Island preset (?) | { Off } |
+| Islands (?) | { 0.00 / cm2 } |
+| Island size (?) | { 12 mm } |
+| Island strength (?) | { 0% } |
+| Fuzzy share (?) | { 1.0 } |
+| Matted share (?) | { 1.0 } |
+| Worn share (?) | { 1.0 } |
+--- Fibre shape & appearance
+/ Yarn fuzz 97% \
+Short fibre ends that follow the yarn.
+Length · mm (?)
+| Minimum | Typical | Maximum |
+| { 0.60 } | { 1.50 } | { 3.00 } |
+| Length spread (?) | { 0.35 } |
+Thickness · mm (?)
+| Minimum | Maximum |
+| { 0.033 } | { 0.039 } |
+| Bow (?) | { 1.00 } |
+| Max lift angle (?) | { 30 deg } |
+| Hug height (?) | { 0.15 } |
+| Lie on the stitches (?) | [ ] |
+> Appearance
+    [x] Match yarn colour
+    | Shading (?) | { Hair (fibre) shading } |
+    | Roughness along | { 0.45 } |
+    | Roughness around | { 0.60 } |
+    | IOR (?) | { 1.40 } | / Stray fibres 3% \
+> Generation details
+    | Segment budget (?) | { 7000000 } |
+    | More at curved yarn | { 0.00 } |
+    | Segments per fibre (?) | { 48 } |
+    | Segment length · mm (?) | { 0.45 } |
+    | Generation (?) | { Budget order (only what the budget keeps) } |
+--------------------------------
+Fibres Not generated
+Reuses the current knit.
+Export: included, generate the fibres first
+[ Apply to model ]
+Preview target [ Reference patch ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Wool preset
+##Stray preset
+##Density preset
+##Density
+##Stray fibres
+##Island preset
+##Islands
+##Island size
+##Island strength
+##Fuzzy share
+##Matted share
+##Worn share
+Yarn fuzz 97%###fuzz
+##Shortest
+##Typical
+##Longest
+##Length spread
+##Thinnest
+##Thickest
+##Bow
+##Max lift angle
+##Hug height
+##Lie on the stitches
+Appearance
+Match yarn colour
+##Shading
+##Roughness along
+##Roughness around
+##IOR
+Stray fibres 3%###stray
+Generation details
+##Segment budget
+##More at curved yarn
+##Segments per fibre
+##Segment length
+##Generation
+Workflow/##fibreStatus_E37A042A
+Apply to model
+##viewToolbar
+Reference patch
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch / Final knit / Export
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Not generated 3  Export Needs fibres
+Export settings
+Wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+Meshes, optional fibres, ply maps and report.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+--- Contents
+| [x] Include fibres | Requested: generate them (Fibres) |
+| [x] Filling |
+Colour |
+| Unknitted parts (?) | { Texture } |
+Unknitted parts are always written, also when hidden in the view; this chooses their colour.
+--- Tessellation
+| Level (?) | { Reduced } |
+Estimate: triangles: knit first, <= 7.0 M fibre segments per object
+Sets the Knit step's Yarn tessellation to Reduced and at most 7.0 M fibre segments.
+Changes tessellation, not knit quality.
+Changing the level means generating the fibres again.
+--- Destination
+Output folder [ Choose folder ... ]
+<tmp>wool-swatch_knit
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Fibres required
+Fibres are included but none have been generated for this knit.
+[ Generate fibres ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 3 triangles
+Wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Knitted result #1 - Final - 4 PASS
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+Include fibres
+Filling
+Colour
+##Unknitted parts
+##Level
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Generate fibres
+##viewToolbar
+Source
+Knit
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Ply texture
+Compare with source  [disabled]
+### wool-swatch / Final knit + fibres / Fibres
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Ready 3  Export Ready
+Fibre settings
+Wool on knitted yarn · applies to the whole object
+--- Fibre setup
+| Wool preset (?) | { Custom } |
+| Stray preset (?) | { Custom } |
+| Density preset (?) | { Custom } |
+--- Coverage
+| Density (?) | { 350 / mm } |
+| Stray fibres (?) | { 3% } |
+--- Fibre islands
+| Island preset (?) | { Off } |
+| Islands (?) | { 0.00 / cm2 } |
+| Island size (?) | { 12 mm } |
+| Island strength (?) | { 0% } |
+| Fuzzy share (?) | { 1.0 } |
+| Matted share (?) | { 1.0 } |
+| Worn share (?) | { 1.0 } |
+--- Fibre shape & appearance
+/ Yarn fuzz 97% \
+Short fibre ends that follow the yarn.
+Length · mm (?)
+| Minimum | Typical | Maximum |
+| { 0.60 } | { 1.50 } | { 3.00 } |
+| Length spread (?) | { 0.35 } |
+Thickness · mm (?)
+| Minimum | Maximum |
+| { 0.033 } | { 0.039 } |
+| Bow (?) | { 1.00 } |
+| Max lift angle (?) | { 30 deg } |
+| Hug height (?) | { 0.15 } |
+| Lie on the stitches (?) | [ ] |
+> Appearance
+    [x] Match yarn colour
+    | Shading (?) | { Hair (fibre) shading } |
+    | Roughness along | { 0.45 } |
+    | Roughness around | { 0.60 } |
+    | IOR (?) | { 1.40 } | / Stray fibres 3% \
+> Generation details
+    | Segment budget (?) | { 7000000 } |
+    | More at curved yarn | { 0.00 } |
+    | Segments per fibre (?) | { 48 } |
+    | Segment length · mm (?) | { 0.45 } |
+    | Generation (?) | { Budget order (only what the budget keeps) } |
+--------------------------------
+Fibres Current #1 of knit #1: 1,234 fibres
+Reuses the current knit.
+Applied to the model: choose Model (Preview target) to see the fibres.
+Export: included
+[ Apply again ]
+Preview target [ Reference patch ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Wool preset
+##Stray preset
+##Density preset
+##Density
+##Stray fibres
+##Island preset
+##Islands
+##Island size
+##Island strength
+##Fuzzy share
+##Matted share
+##Worn share
+Yarn fuzz 97%###fuzz
+##Shortest
+##Typical
+##Longest
+##Length spread
+##Thinnest
+##Thickest
+##Bow
+##Max lift angle
+##Hug height
+##Lie on the stitches
+Appearance
+Match yarn colour
+##Shading
+##Roughness along
+##Roughness around
+##IOR
+Stray fibres 3%###stray
+Generation details
+##Segment budget
+##More at curved yarn
+##Segments per fibre
+##Segment length
+##Generation
+Workflow/##fibreStatus_E37A042A
+Apply again
+##viewToolbar
+Reference patch
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch / Final knit + fibres / Export
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Ready 3  Export Ready
+Export settings
+Wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+Meshes, optional fibres, ply maps and report.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+--- Contents
+| [x] Include fibres | Included |
+| [x] Filling |
+Colour |
+| Unknitted parts (?) | { Texture } |
+Unknitted parts are always written, also when hidden in the view; this chooses their colour.
+--- Tessellation
+| Level (?) | { Reduced } |
+Estimate: triangles: knit first, 4 k fibre segments
+Sets the Knit step's Yarn tessellation to Reduced and at most 7.0 M fibre segments.
+Changes tessellation, not knit quality.
+Changing the level means generating the fibres again.
+--- Destination
+Output folder [ Choose folder ... ]
+<tmp>wool-swatch_knit
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Ready to export
+Photon Path Tracer package · fibres included
+[ Export package ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 3 triangles; 1,234 fibres generated (4,321 segments), not shown in this view
+Wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Knitted result #1 - Final - 4 PASS
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+Include fibres
+Filling
+Colour
+##Unknitted parts
+##Level
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Export package
+##viewToolbar
+Source
+Knit
+Fibres
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Ply texture
+Compare with source  [disabled]
+### wool-swatch / fur workflow / Knit
+Knit viewer Import Ready 1  Fur Not grown 2  Export Needs fur
+Knit
+Wool swatch on a needle (12 cm) · Example · applies to every part
+--- Knitting
+Not used
+Nothing is knitted: the Fur workflow grows fur on the mesh itself (Import -> Fur -> Export).
+[ Next: Fur ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Wool swatch on a needle (12 cm) No fur yet: Grow fur grows it on the mesh
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Next: Fur
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch / fur workflow / Fibres
+Knit viewer Import Ready 1  Fur Not grown 2  Export Needs fur
+Fur
+Loops and fine fibres on the mesh · applies to the whole object
+--- Coverage
+(x) Entire surface ( ) Mask image
+Parts can be switched off once the fur has grown on the model.
+[ ] Show coverage on the model
+--- Loops
+| Density (?) | { 400 / cm² } |
+| Length (?) | { 1.00 turns } |
+| Thickness (?) | { 0.60 mm } |
+| Taper (?) | { 80 % } |
+| Bend (?) | { 1.00 } |
+| Curl (?) | { 0.90 mm } |
+| Gravity (?) | { 9.81 m/s² } |
+> Variation
+    | Length Var. (?) | { 50 % } |
+    | Thickness Var. (?) | { 33 % } |
+    | Direction Var. (?) | { 100 % } |
+    | Bend Var. (?) | { 20 % } |
+    | Curl Var. (?) | { 100 % } |
+--- Fibres
+[x] Fine fibres over the loops
+| Density##fibres (?) | { 150 / cm² } |
+| Length##fibres (?) | { 4.0 mm } |
+| Length spread (?) | { 0.30 } |
+| Thickness##fibres (?) | { 0.060 mm } |
+| Taper##fibres (?) | { 30 % } |
+| Lift (?) | { 85 deg } |
+| Direction Var.##fibres (?) | { 100 % } |
+--- Islands
+| Rate (?) | { 0.00 / cm² } |
+| Size##islands (?) | { 15 mm } |
+| Strength##islands (?) | { 60 % } |
+| Matted (?) | { 1.0 } |
+| Fluffy (?) | { 1.0 } |
+| Thin (?) | { 1.0 } |
+--- Irregularities
+| Density Var. (?) | { 0 % } |
+| Density Var. Scale (?) | { 10.0 mm } |
+| Patch length (?) | { 0 % } |
+| Patch lift (?) | { 0 % } |
+| Clump size (?) | { 2.0 mm } |
+| Clump strength (?) | { 0 % } |
+| Wear (?) | { 0 % } |
+--- Appearance
+(x) Colour from the object ( ) One colour
+( ) Colour from the texture
+One colour per part: its source material's stored colour (with a texture, its average).
+| Roughness along (?) | { 0.30 } |
+| Roughness around (?) | { 0.30 } |
+| Index of refraction | { 1.55 } |
+--- View
+| Colour by (?) | { Plain } |
+Choose Discs (Preview target, above the view) for the live disc preview.
+> Advanced
+    { 0 } [ - ] [ + ] Seed
+    { 7000000 } Segment budget
+--------------------------------
+Fur Not grown
+The export writes the mesh with this fur.
+[ Grow fur ]
+Preview target [ Discs ] [ Reference sphere ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Wool swatch on a needle (12 cm) Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Entire surface
+Mask image
+Show coverage on the model
+##Density
+##Length
+##Thickness
+##Taper
+##Bend
+##Curl
+##Gravity
+Variation
+##Length Var.
+##Thickness Var.
+##Direction Var.
+##Bend Var.
+##Curl Var.
+Fine fibres over the loops
+##Density##fibres
+##Length##fibres
+##Length spread
+##Thickness##fibres
+##Taper##fibres
+##Lift
+##Direction Var.##fibres
+##Rate
+##Size##islands
+##Strength##islands
+##Matted
+##Fluffy
+##Thin
+##Density Var.
+##Density Var. Scale
+##Patch length
+##Patch lift
+##Clump size
+##Clump strength
+##Wear
+Colour from the object
+One colour
+Colour from the texture
+##Roughness along
+##Roughness around
+##Index of refraction
+##Colour by
+Advanced
+Seed
+-
++
+Segment budget
+Workflow/##fibreStatus_E37A042A
+Grow fur
+##viewToolbar
+Discs
+Reference sphere
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch / fur workflow / Export
+Knit viewer Import Ready 1  Fur Not grown 2  Export Needs fur
+Export settings
+Wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+The mesh with its fur, and report.json.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+    With knitting skipped: the mesh, with its base colour texture, instead of the yarn tubes.
+--- Contents
+The mesh and the fur grown in the Fur step.
+The Fur workflow knits nothing: no yarn tubes or ply maps are written.
+| Body colour (?) | { Texture } |
+Colour source of the surface under the fur.
+--- Destination
+Output folder [ Choose folder ... ]
+<src>\out\exports\wool-swatch_fur
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Fur required
+There is no fur yet.
+[ Grow fur ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Wool swatch on a needle (12 cm) No fur yet: Grow fur grows it on the mesh
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+##Body colour
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Grow fur
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch-blue / opened / Import
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+--- Object
+Blue wool swatch on a needle (12 cm)
+Example scene: imported with a fixed size and mesh selection.
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0.
+--- Components
+1 of 2 with yarn or fur, fixed by the example
+swatch 112,024 triangles [x] Knit
+needle 46,976 triangles [ ] Keep mesh
+Unticked components keep their mesh and textures.
+--- What to make
+[ Knit ] [ Fur ]
+[ Open mesh (OBJ, PLY) ... ]
+Or drop an OBJ or PLY file anywhere in the window. Limits: 200 MB of mesh data (textures not counted), 200 components, 2 million triangles.
+--- Examples
+[ Wool swatch on a needle (12 cm) ]
+[ Blue wool swatch on a needle (12 cm) ]
+--- Method
+Knitting follows each flattened surface piece (UV chart) of the mesh with a regular lattice of stitches. Each chart's rows continue a few stitches past its border onto its neighbours, so the seams are covered by overlapping yarn (Seams: Overlapped); the seams are not sewn and the stitch count does not shape the fabric. Every import and example is knitted this way except the teddy: it is knitted as spiral pieces (one closed spiral per body part, shaped by increases and decreases). This is the project's own method, not Stitch Mesh / Stitch Meshing.
+An opened mesh is first rebuilt as one closed surface at stitch scale, with few wide charts and its base colours baked onto them, so that any model can be knitted. Components left unticked stay as the file has them.
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Blue wool swatch on a needle (12 cm) Nothing to show yet: knit to build the scene - not knitted yet
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Knit swatch  [disabled]
+Knit needle  [disabled]
+Knit
+Fur
+Open mesh (OBJ, PLY) ...  [disabled]
+Wool swatch on a needle (12 cm)
+Blue wool swatch on a needle (12 cm)
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch-blue / opened / Mark
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Mark
+Markings for the stitch mesher (optional): where knitting starts and finishes, and where each round begins.
+Markings are drawn on an imported file's pieces: import a file (Import).
+[ Markings ] [ Rows ] [ Stitch Mesh ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Blue wool swatch on a needle (12 cm) The Mark step works on an imported file
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##viewToolbar
+Markings  [disabled]
+Rows  [disabled]
+Stitch Mesh  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch-blue / opened / Knit
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Knit
+Blue wool swatch on a needle (12 cm) · Example · applies to every part
+Construction
+Single tube
+One smooth tube · fastest Ply tubes
+Real ply geometry · close-ups
+Fibre strands
+Individual fibres · detailed close-ups Fibre maps
+Fibre detail on tubes · lower render cost
+Each yarn drawn as 1 to 3 plies of long fibres in place of its tube (far more to render), on the same knit: switching knits nothing again. The fibres are set up in the Fibres step.
+Smooth · 3 plies · 400 fibres · knit to see the cost
+Set up in the Fibres step
+Yarn & stitch size Custom
+| Yarn diameter | { 1.93 mm } |
+| Gauge (?) | { Custom } |
+| Stitch width | { 5.50 mm } |
+| Row height | { 3.95 mm } |
+18.2 stitches × 25.3 rows / 10 cm
+> Gauge & yarn geometry 0.80 D · 0.10 mm clearance · contact flattening
+    [x] Flatten yarn that is too thick for the stitch
+    The stitch is too tight for a round 1.93 mm yarn: knitted at a 1.16 mm contact diameter (yarn compressed to 60 %) and drawn at 1.93 mm, flattened where yarns touch.
+    | Depth | { 0.80 D } |
+    | Clearance | { 0.10 mm } |
+    [x] Contact flattening
+    | Inflation | { 0.35 } |
+    | Max flattening (?) | { 15 % } |
+Stitch pattern
+Stockinette
+Knit V shapes on the front · the plain fabric Reverse stockinette
+Purl bumps on the front · inside out
+Garter
+Ridges on both faces · shorter rows Rib 1 x 1
+Knit and purl columns · narrow, stretchy
+Knit stitches (V shapes) on the front, purl bumps on the back.
+Checking the pattern on a flat swatch ... (?)
+Stitch character Custom
+Off Natural Hand-made Rustic
+Your own values (Fine-tune character).
+> Fine-tune character 20 % uneven · 0.60 raised loops / cm2 · 0.80 spots / cm2
+    | Uneven stitches (?) | { 20% } |
+    | Column shift (?) | { 0.80 mm } |
+    | Column run (?) | { 5 rows } |
+    | Raised loops (?) | { 0.60 / cm2 } |
+    | Loop height (?) | { 1.00 mm } |
+    | Thick and thin spots (?) | { 0.80 / cm2 } |
+    | Spot strength (?) | { 25% } |
+    | Spot length (?) | { 16 mm } |
+    | Fabric wave (?) | { 0.50 mm } |
+    | Variation (?) | { 1 } |
+    Knit draft moves the stitches. The yarn settles into them at Knit final.
+Yarn colour
+| Source | { One colour } |
+| Colour | |
+Details
+> Stitch layout Overlapped seams · 0 deg
+    | Seams (?) | { Overlapped } |
+    | Row direction | { 0 deg } |
+> Mesh detail Reduced
+    | Yarn tessellation (?) | { Reduced } |
+    Changing it rebuilds the yarn tubes from the knit (no knitting). Generate fibres again so their roots match.
+    The yarn is made of fibres: this tube is what the viewport draws and where the fuzz grows; the export writes the fibres.
+--------------------------------
+Not knitted export needs Final
+[ Knit draft ] [ Knit final ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Blue wool swatch on a needle (12 cm) Nothing to show yet: knit to build the scene - not knitted yet
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Single tube
+Ply tubes
+Fibre strands
+Fibre maps
+Set up in the Fibres step
+##Yarn diameter
+##Gauge
+##Stitch width
+##Row height
+Gauge & yarn geometry
+Flatten yarn that is too thick for the stitch
+##Depth
+##Clearance
+Contact flattening
+##Inflation
+##Max flattening
+Stockinette
+Reverse stockinette
+Garter
+Rib 1 x 1
+Off
+Natural
+Hand-made
+Rustic
+Fine-tune character
+##Uneven stitches
+##Column shift
+##Column run
+##Raised loops
+##Loop height
+##Thick and thin spots
+##Spot strength
+##Spot length
+##Fabric wave
+##Variation
+##Yarn colour
+##Colour
+Stitch layout
+##Seams
+##Row direction
+Mesh detail
+##Yarn tessellation
+Workflow/##knitStatus_C7B68FDF
+Knit draft
+Knit final
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch-blue / opened / Fibres
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Fibre settings
+Yarn fibres and the fuzz on them · applies to the whole object
+Yarn fibres
+The yarn is made of fibre strands (Construction, Knit step). The viewport shows a simplified yarn (the tube); the strands appear in the render preview (Preview, status bar) and in every export, in place of the tube. The fuzz below grows on top of them.
+Edits here need no action: the render preview and the export use the current values. The Reference patch (Preview target) shows the fuzz on a plain tube, not the yarn's fibres.
+| Look (?) | { Smooth } |
+| Plies (?) | { 3 } |
+| Fibres per yarn (?) | { 400 } |
+| Fibre diameter · um (?) | { 36 } |
+Knit to see what the yarn's fibres cost and the renderer's GPU memory.
+> Fibre structure shell 60 %, opaque core
+    | Shell depth (?) | { 60 % } |
+    | Fibre angle (?) | { 20 deg } |
+    | Ply angle (?) | { 20 deg } |
+    | Interior fibres (?) | { 0 } |
+    | Core (?) | { Opaque } |
+    | Irregularity (?) | { 1.00 } |
+    | Fibre seed (?) | { 1 } |
+> Fibre appearance roughness 0.60 / 0.60, IOR 1.40
+    | Fibre roughness along (?) | { 0.60 } |
+    | Fibre roughness around (?) | { 0.60 } |
+    | Fibre IOR (?) | { 1.40 } |
+--- Fibre setup
+| Wool preset (?) | { Custom } |
+| Stray preset (?) | { Custom } |
+| Density preset (?) | { Custom } |
+--- Coverage
+| Density (?) | { 350 / mm } |
+| Stray fibres (?) | { 3% } |
+--- Fibre islands
+| Island preset (?) | { Off } |
+| Islands (?) | { 0.00 / cm2 } |
+| Island size (?) | { 12 mm } |
+| Island strength (?) | { 0% } |
+| Fuzzy share (?) | { 1.0 } |
+| Matted share (?) | { 1.0 } |
+| Worn share (?) | { 1.0 } |
+--- Fibre shape & appearance
+/ Yarn fuzz 97% \
+Short fibre ends that follow the yarn.
+Length · mm (?)
+| Minimum | Typical | Maximum |
+| { 0.60 } | { 1.50 } | { 3.00 } |
+| Length spread (?) | { 0.35 } |
+Thickness · mm (?)
+| Minimum | Maximum |
+| { 0.033 } | { 0.039 } |
+| Bow (?) | { 1.00 } |
+| Max lift angle (?) | { 15 deg } |
+| Hug height (?) | { 0.15 } |
+| Lie on the stitches (?) | [ ] |
+> Appearance
+    [x] Match yarn colour
+    | Shading (?) | { Hair (fibre) shading } |
+    | Roughness along | { 0.60 } |
+    | Roughness around | { 0.60 } |
+    | IOR (?) | { 1.40 } | / Stray fibres 3% \
+> Generation details
+    | Segment budget (?) | { 7000000 } |
+    | More at curved yarn | { 0.00 } |
+    | Segments per fibre (?) | { 48 } |
+    | Segment length · mm (?) | { 0.45 } |
+    | Generation (?) | { Budget order (only what the budget keeps) } |
+--------------------------------
+Fuzz Knit first
+Fibres grow on a knitted result that matches the current knitting settings.
+Export: included, generate the fuzz first
+[ Knit first ]
+Preview target [ Reference patch ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Blue wool swatch on a needle (12 cm) Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Look
+##Plies
+##Fibres per yarn
+##Fibre diameter · um
+Fibre structure
+##Shell depth
+##Fibre angle
+##Ply angle
+##Interior fibres
+##Core
+##Irregularity
+##Fibre seed
+Fibre appearance
+##Fibre roughness along
+##Fibre roughness around
+##Fibre IOR
+##Wool preset
+##Stray preset
+##Density preset
+##Density
+##Stray fibres
+##Island preset
+##Islands
+##Island size
+##Island strength
+##Fuzzy share
+##Matted share
+##Worn share
+Yarn fuzz 97%###fuzz
+##Shortest
+##Typical
+##Longest
+##Length spread
+##Thinnest
+##Thickest
+##Bow
+##Max lift angle
+##Hug height
+##Lie on the stitches
+Appearance
+Match yarn colour
+##Shading
+##Roughness along
+##Roughness around
+##IOR
+Stray fibres 3%###stray
+Generation details
+##Segment budget
+##More at curved yarn
+##Segments per fibre
+##Segment length
+##Generation
+Workflow/##fibreStatus_E37A042A
+Knit first
+##viewToolbar
+Reference patch
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch-blue / opened / Export
+Knit viewer Import Ready Mark Imports only 1  Knit Not knitted 2  Fibres Knit first 3  Export Needs Final knit
+Export settings
+Blue wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+Meshes, optional fibres, ply maps and report.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+--- Contents
+| Yarn fibres (?) | Included through Construction |
+| [x] Include fuzz | Requested: generate them (Fibres) |
+| [ ] Filling |
+Colour |
+| Unknitted parts (?) | { Texture } |
+Unknitted parts are always written, also when hidden in the view; this chooses their colour.
+--- Tessellation
+| Level (?) | { Reduced } |
+Estimate: triangles: knit first, <= 7.0 M fibre segments per object
+Sets the Knit step's Yarn tessellation to Reduced and at most 7.0 M fibre segments.
+Changes tessellation, not knit quality.
+Changing the level means generating the fibres again.
+--- Destination
+Output folder [ Choose folder ... ]
+<tmp>wool-swatch-blue_knit
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Final knit required
+There is no knitted result yet.
+[ Knit at Final quality ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Blue wool swatch on a needle (12 cm) Nothing to show yet: knit to build the scene - not knitted yet
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+Include fuzz
+Filling
+Colour  [disabled]
+##Unknitted parts
+##Level
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Knit at Final quality
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+--- View popover
+##Popup_857513a5
+3/4 view
+Front
+Side
+Top
+Back
+Upright
+### wool-swatch-blue / Final knit / Knit
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Not generated 3  Export Needs fibres
+Knit
+Blue wool swatch on a needle (12 cm) · Example · applies to every part
+Construction
+Single tube
+One smooth tube · fastest Ply tubes
+Real ply geometry · close-ups
+Fibre strands
+Individual fibres · detailed close-ups Fibre maps
+Fibre detail on tubes · lower render cost
+Each yarn drawn as 1 to 3 plies of long fibres in place of its tube (far more to render), on the same knit: switching knits nothing again. The fibres are set up in the Fibres step.
+Smooth · 3 plies · 400 fibres · knit to see the cost
+Set up in the Fibres step
+Yarn & stitch size Custom
+| Yarn diameter | { 1.93 mm } |
+| Gauge (?) | { Custom } |
+| Stitch width | { 5.50 mm } |
+| Row height | { 3.95 mm } |
+18.2 stitches × 25.3 rows / 10 cm
+> Gauge & yarn geometry 0.80 D · 0.10 mm clearance · contact flattening
+    [x] Flatten yarn that is too thick for the stitch
+    The stitch is too tight for a round 1.93 mm yarn: knitted at a 1.16 mm contact diameter (yarn compressed to 60 %) and drawn at 1.93 mm, flattened where yarns touch.
+    | Depth | { 0.80 D } |
+    | Clearance | { 0.10 mm } |
+    [x] Contact flattening
+    | Inflation | { 0.35 } |
+    | Max flattening (?) | { 15 % } |
+Stitch pattern
+Stockinette
+Knit V shapes on the front · the plain fabric Reverse stockinette
+Purl bumps on the front · inside out
+Garter
+Ridges on both faces · shorter rows Rib 1 x 1
+Knit and purl columns · narrow, stretchy
+Knit stitches (V shapes) on the front, purl bumps on the back.
+Checking the pattern on a flat swatch ... (?)
+Stitch character Custom
+Off Natural Hand-made Rustic
+Your own values (Fine-tune character).
+> Fine-tune character 20 % uneven · 0.60 raised loops / cm2 · 0.80 spots / cm2
+    | Uneven stitches (?) | { 20% } |
+    | Column shift (?) | { 0.80 mm } |
+    | Column run (?) | { 5 rows } |
+    | Raised loops (?) | { 0.60 / cm2 } |
+    | Loop height (?) | { 1.00 mm } |
+    | Thick and thin spots (?) | { 0.80 / cm2 } |
+    | Spot strength (?) | { 25% } |
+    | Spot length (?) | { 16 mm } |
+    | Fabric wave (?) | { 0.50 mm } |
+    | Variation (?) | { 1 } |
+    Knit draft moves the stitches. The yarn settles into them at Knit final.
+Yarn colour
+| Source | { One colour } |
+| Colour | |
+Details
+> Stitch layout Overlapped seams · 0 deg
+    | Seams (?) | { Overlapped } |
+    | Row direction | { 0 deg } |
+> Mesh detail Reduced
+    | Yarn tessellation (?) | { Reduced } |
+    Changing it rebuilds the yarn tubes from the knit (no knitting). Generate fibres again so their roots match.
+    The yarn is made of fibres: this tube is what the viewport draws and where the fuzz grows; the export writes the fibres.
+--------------------------------
+Final #1: 4 parts, 4 PASS
+[ Knit draft ] [ Knit final ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 3 triangles
+Blue wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Knitted result #1 - Final - 4 PASS
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Single tube
+Ply tubes
+Fibre strands
+Fibre maps
+Set up in the Fibres step
+##Yarn diameter
+##Gauge
+##Stitch width
+##Row height
+Gauge & yarn geometry
+Flatten yarn that is too thick for the stitch
+##Depth
+##Clearance
+Contact flattening
+##Inflation
+##Max flattening
+Stockinette
+Reverse stockinette
+Garter
+Rib 1 x 1
+Off
+Natural
+Hand-made
+Rustic
+Fine-tune character
+##Uneven stitches
+##Column shift
+##Column run
+##Raised loops
+##Loop height
+##Thick and thin spots
+##Spot strength
+##Spot length
+##Fabric wave
+##Variation
+##Yarn colour
+##Colour
+Stitch layout
+##Seams
+##Row direction
+Mesh detail
+##Yarn tessellation
+Workflow/##knitStatus_C7B68FDF
+Knit draft
+Knit final
+##viewToolbar
+Source
+Knit
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Ply texture  [disabled]
+Compare with source  [disabled]
+### wool-swatch-blue / Final knit / Fibres
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Not generated 3  Export Needs fibres
+Fibre settings
+Yarn fibres and the fuzz on them · applies to the whole object
+Yarn fibres
+The yarn is made of fibre strands (Construction, Knit step). The viewport shows a simplified yarn (the tube); the strands appear in the render preview (Preview, status bar) and in every export, in place of the tube. The fuzz below grows on top of them.
+Edits here need no action: the render preview and the export use the current values. The Reference patch (Preview target) shows the fuzz on a plain tube, not the yarn's fibres.
+| Look (?) | { Smooth } |
+| Plies (?) | { 3 } |
+| Fibres per yarn (?) | { 400 } |
+| Fibre diameter · um (?) | { 36 } |
+Knit to see what the yarn's fibres cost and the renderer's GPU memory.
+> Fibre structure shell 60 %, opaque core
+    | Shell depth (?) | { 60 % } |
+    | Fibre angle (?) | { 20 deg } |
+    | Ply angle (?) | { 20 deg } |
+    | Interior fibres (?) | { 0 } |
+    | Core (?) | { Opaque } |
+    | Irregularity (?) | { 1.00 } |
+    | Fibre seed (?) | { 1 } |
+> Fibre appearance roughness 0.60 / 0.60, IOR 1.40
+    | Fibre roughness along (?) | { 0.60 } |
+    | Fibre roughness around (?) | { 0.60 } |
+    | Fibre IOR (?) | { 1.40 } |
+--- Fibre setup
+| Wool preset (?) | { Custom } |
+| Stray preset (?) | { Custom } |
+| Density preset (?) | { Custom } |
+--- Coverage
+| Density (?) | { 350 / mm } |
+| Stray fibres (?) | { 3% } |
+--- Fibre islands
+| Island preset (?) | { Off } |
+| Islands (?) | { 0.00 / cm2 } |
+| Island size (?) | { 12 mm } |
+| Island strength (?) | { 0% } |
+| Fuzzy share (?) | { 1.0 } |
+| Matted share (?) | { 1.0 } |
+| Worn share (?) | { 1.0 } |
+--- Fibre shape & appearance
+/ Yarn fuzz 97% \
+Short fibre ends that follow the yarn.
+Length · mm (?)
+| Minimum | Typical | Maximum |
+| { 0.60 } | { 1.50 } | { 3.00 } |
+| Length spread (?) | { 0.35 } |
+Thickness · mm (?)
+| Minimum | Maximum |
+| { 0.033 } | { 0.039 } |
+| Bow (?) | { 1.00 } |
+| Max lift angle (?) | { 15 deg } |
+| Hug height (?) | { 0.15 } |
+| Lie on the stitches (?) | [ ] |
+> Appearance
+    [x] Match yarn colour
+    | Shading (?) | { Hair (fibre) shading } |
+    | Roughness along | { 0.60 } |
+    | Roughness around | { 0.60 } |
+    | IOR (?) | { 1.40 } | / Stray fibres 3% \
+> Generation details
+    | Segment budget (?) | { 7000000 } |
+    | More at curved yarn | { 0.00 } |
+    | Segments per fibre (?) | { 48 } |
+    | Segment length · mm (?) | { 0.45 } |
+    | Generation (?) | { Budget order (only what the budget keeps) } |
+--------------------------------
+Fuzz Not generated
+Reuses the current knit.
+Export: included, generate the fuzz first
+[ Generate fuzz ]
+Preview target [ Reference patch ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Blue wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Look
+##Plies
+##Fibres per yarn
+##Fibre diameter · um
+Fibre structure
+##Shell depth
+##Fibre angle
+##Ply angle
+##Interior fibres
+##Core
+##Irregularity
+##Fibre seed
+Fibre appearance
+##Fibre roughness along
+##Fibre roughness around
+##Fibre IOR
+##Wool preset
+##Stray preset
+##Density preset
+##Density
+##Stray fibres
+##Island preset
+##Islands
+##Island size
+##Island strength
+##Fuzzy share
+##Matted share
+##Worn share
+Yarn fuzz 97%###fuzz
+##Shortest
+##Typical
+##Longest
+##Length spread
+##Thinnest
+##Thickest
+##Bow
+##Max lift angle
+##Hug height
+##Lie on the stitches
+Appearance
+Match yarn colour
+##Shading
+##Roughness along
+##Roughness around
+##IOR
+Stray fibres 3%###stray
+Generation details
+##Segment budget
+##More at curved yarn
+##Segments per fibre
+##Segment length
+##Generation
+Workflow/##fibreStatus_E37A042A
+Generate fuzz
+##viewToolbar
+Reference patch
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch-blue / Final knit / Export
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Not generated 3  Export Needs fibres
+Export settings
+Blue wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+Meshes, optional fibres, ply maps and report.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+--- Contents
+| Yarn fibres (?) | Included through Construction |
+| [x] Include fuzz | Requested: generate them (Fibres) |
+| [ ] Filling |
+Colour |
+| Unknitted parts (?) | { Texture } |
+Unknitted parts are always written, also when hidden in the view; this chooses their colour.
+--- Tessellation
+| Level (?) | { Reduced } |
+Estimate: triangles: knit first, <= 7.0 M fibre segments per object
+Sets the Knit step's Yarn tessellation to Reduced and at most 7.0 M fibre segments.
+Changes tessellation, not knit quality.
+Changing the level means generating the fibres again.
+--- Destination
+Output folder [ Choose folder ... ]
+<tmp>wool-swatch-blue_knit
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Fibres required
+Fibres are included but none have been generated for this knit.
+[ Generate fibres ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 3 triangles
+Blue wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Knitted result #1 - Final - 4 PASS
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+Include fuzz
+Filling
+Colour  [disabled]
+##Unknitted parts
+##Level
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Generate fibres
+##viewToolbar
+Source
+Knit
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Ply texture  [disabled]
+Compare with source  [disabled]
+### wool-swatch-blue / Final knit + fibres / Fibres
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Ready 3  Export Ready
+Fibre settings
+Yarn fibres and the fuzz on them · applies to the whole object
+Yarn fibres
+The yarn is made of fibre strands (Construction, Knit step). The viewport shows a simplified yarn (the tube); the strands appear in the render preview (Preview, status bar) and in every export, in place of the tube. The fuzz below grows on top of them.
+Edits here need no action: the render preview and the export use the current values. The Reference patch (Preview target) shows the fuzz on a plain tube, not the yarn's fibres.
+| Look (?) | { Smooth } |
+| Plies (?) | { 3 } |
+| Fibres per yarn (?) | { 400 } |
+| Fibre diameter · um (?) | { 36 } |
+Knit to see what the yarn's fibres cost and the renderer's GPU memory.
+> Fibre structure shell 60 %, opaque core
+    | Shell depth (?) | { 60 % } |
+    | Fibre angle (?) | { 20 deg } |
+    | Ply angle (?) | { 20 deg } |
+    | Interior fibres (?) | { 0 } |
+    | Core (?) | { Opaque } |
+    | Irregularity (?) | { 1.00 } |
+    | Fibre seed (?) | { 1 } |
+> Fibre appearance roughness 0.60 / 0.60, IOR 1.40
+    | Fibre roughness along (?) | { 0.60 } |
+    | Fibre roughness around (?) | { 0.60 } |
+    | Fibre IOR (?) | { 1.40 } |
+--- Fibre setup
+| Wool preset (?) | { Custom } |
+| Stray preset (?) | { Custom } |
+| Density preset (?) | { Custom } |
+--- Coverage
+| Density (?) | { 350 / mm } |
+| Stray fibres (?) | { 3% } |
+--- Fibre islands
+| Island preset (?) | { Off } |
+| Islands (?) | { 0.00 / cm2 } |
+| Island size (?) | { 12 mm } |
+| Island strength (?) | { 0% } |
+| Fuzzy share (?) | { 1.0 } |
+| Matted share (?) | { 1.0 } |
+| Worn share (?) | { 1.0 } |
+--- Fibre shape & appearance
+/ Yarn fuzz 97% \
+Short fibre ends that follow the yarn.
+Length · mm (?)
+| Minimum | Typical | Maximum |
+| { 0.60 } | { 1.50 } | { 3.00 } |
+| Length spread (?) | { 0.35 } |
+Thickness · mm (?)
+| Minimum | Maximum |
+| { 0.033 } | { 0.039 } |
+| Bow (?) | { 1.00 } |
+| Max lift angle (?) | { 15 deg } |
+| Hug height (?) | { 0.15 } |
+| Lie on the stitches (?) | [ ] |
+> Appearance
+    [x] Match yarn colour
+    | Shading (?) | { Hair (fibre) shading } |
+    | Roughness along | { 0.60 } |
+    | Roughness around | { 0.60 } |
+    | IOR (?) | { 1.40 } | / Stray fibres 3% \
+> Generation details
+    | Segment budget (?) | { 7000000 } |
+    | More at curved yarn | { 0.00 } |
+    | Segments per fibre (?) | { 48 } |
+    | Segment length · mm (?) | { 0.45 } |
+    | Generation (?) | { Budget order (only what the budget keeps) } |
+--------------------------------
+Fuzz Current #1 of knit #1: 1,234 fibres
+Reuses the current knit.
+Applied to the model: choose Model (Preview target) to see the fibres.
+Export: included
+[ Generate fuzz again ]
+Preview target [ Reference patch ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Blue wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Look
+##Plies
+##Fibres per yarn
+##Fibre diameter · um
+Fibre structure
+##Shell depth
+##Fibre angle
+##Ply angle
+##Interior fibres
+##Core
+##Irregularity
+##Fibre seed
+Fibre appearance
+##Fibre roughness along
+##Fibre roughness around
+##Fibre IOR
+##Wool preset
+##Stray preset
+##Density preset
+##Density
+##Stray fibres
+##Island preset
+##Islands
+##Island size
+##Island strength
+##Fuzzy share
+##Matted share
+##Worn share
+Yarn fuzz 97%###fuzz
+##Shortest
+##Typical
+##Longest
+##Length spread
+##Thinnest
+##Thickest
+##Bow
+##Max lift angle
+##Hug height
+##Lie on the stitches
+Appearance
+Match yarn colour
+##Shading
+##Roughness along
+##Roughness around
+##IOR
+Stray fibres 3%###stray
+Generation details
+##Segment budget
+##More at curved yarn
+##Segments per fibre
+##Segment length
+##Generation
+Workflow/##fibreStatus_E37A042A
+Generate fuzz again
+##viewToolbar
+Reference patch
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch-blue / Final knit + fibres / Export
+Knit viewer Import Ready Mark Imports only 1  Knit Final 2  Fibres Ready 3  Export Ready
+Export settings
+Blue wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+Meshes, optional fibres, ply maps and report.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+--- Contents
+| Yarn fibres (?) | Included through Construction |
+| [x] Include fuzz | Included |
+| [ ] Filling |
+Colour |
+| Unknitted parts (?) | { Texture } |
+Unknitted parts are always written, also when hidden in the view; this chooses their colour.
+--- Tessellation
+| Level (?) | { Reduced } |
+Estimate: triangles: knit first, 4 k fibre segments
+Sets the Knit step's Yarn tessellation to Reduced and at most 7.0 M fibre segments.
+Changes tessellation, not knit quality.
+Changing the level means generating the fibres again.
+--- Destination
+Output folder [ Choose folder ... ]
+<tmp>wool-swatch-blue_knit
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Ready to export
+Photon Path Tracer package · yarn made of fibres · fuzz included
+[ Export package ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 3 triangles; 1,234 fibres generated (4,321 segments), not shown in this view
+Blue wool swatch on a needle (12 cm)  · 200 x 200 x 200 mm Knitted result #1 - Final - 4 PASS
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+Include fuzz
+Filling
+Colour  [disabled]
+##Unknitted parts
+##Level
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Export package
+##viewToolbar
+Source
+Knit
+Fibres
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Ply texture  [disabled]
+Compare with source  [disabled]
+### wool-swatch-blue / fur workflow / Knit
+Knit viewer Import Ready 1  Fur Not grown 2  Export Needs fur
+Knit
+Blue wool swatch on a needle (12 cm) · Example · applies to every part
+--- Knitting
+Not used
+Nothing is knitted: the Fur workflow grows fur on the mesh itself (Import -> Fur -> Export).
+[ Next: Fur ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Blue wool swatch on a needle (12 cm) No fur yet: Grow fur grows it on the mesh
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Next: Fur
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]
+### wool-swatch-blue / fur workflow / Fibres
+Knit viewer Import Ready 1  Fur Not grown 2  Export Needs fur
+Fur
+Loops and fine fibres on the mesh · applies to the whole object
+--- Coverage
+(x) Entire surface ( ) Mask image
+Parts can be switched off once the fur has grown on the model.
+[ ] Show coverage on the model
+--- Loops
+| Density (?) | { 400 / cm² } |
+| Length (?) | { 1.00 turns } |
+| Thickness (?) | { 0.60 mm } |
+| Taper (?) | { 80 % } |
+| Bend (?) | { 1.00 } |
+| Curl (?) | { 0.90 mm } |
+| Gravity (?) | { 9.81 m/s² } |
+> Variation
+    | Length Var. (?) | { 50 % } |
+    | Thickness Var. (?) | { 33 % } |
+    | Direction Var. (?) | { 100 % } |
+    | Bend Var. (?) | { 20 % } |
+    | Curl Var. (?) | { 100 % } |
+--- Fibres
+[x] Fine fibres over the loops
+| Density##fibres (?) | { 150 / cm² } |
+| Length##fibres (?) | { 4.0 mm } |
+| Length spread (?) | { 0.30 } |
+| Thickness##fibres (?) | { 0.060 mm } |
+| Taper##fibres (?) | { 30 % } |
+| Lift (?) | { 85 deg } |
+| Direction Var.##fibres (?) | { 100 % } |
+--- Islands
+| Rate (?) | { 0.00 / cm² } |
+| Size##islands (?) | { 15 mm } |
+| Strength##islands (?) | { 60 % } |
+| Matted (?) | { 1.0 } |
+| Fluffy (?) | { 1.0 } |
+| Thin (?) | { 1.0 } |
+--- Irregularities
+| Density Var. (?) | { 0 % } |
+| Density Var. Scale (?) | { 10.0 mm } |
+| Patch length (?) | { 0 % } |
+| Patch lift (?) | { 0 % } |
+| Clump size (?) | { 2.0 mm } |
+| Clump strength (?) | { 0 % } |
+| Wear (?) | { 0 % } |
+--- Appearance
+(x) Colour from the object ( ) One colour
+( ) Colour from the texture
+One colour per part: its source material's stored colour (with a texture, its average).
+| Roughness along (?) | { 0.30 } |
+| Roughness around (?) | { 0.30 } |
+| Index of refraction | { 1.55 } |
+--- View
+| Colour by (?) | { Plain } |
+Choose Discs (Preview target, above the view) for the live disc preview.
+> Advanced
+    { 0 } [ - ] [ + ] Seed
+    { 7000000 } Segment budget
+--------------------------------
+Fur Not grown
+The export writes the mesh with this fur.
+[ Grow fur ]
+Preview target [ Discs ] [ Reference sphere ] [ Model ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Reference patch: 0 triangles
+Blue wool swatch on a needle (12 cm) Building the reference ...
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+Entire surface
+Mask image
+Show coverage on the model
+##Density
+##Length
+##Thickness
+##Taper
+##Bend
+##Curl
+##Gravity
+Variation
+##Length Var.
+##Thickness Var.
+##Direction Var.
+##Bend Var.
+##Curl Var.
+Fine fibres over the loops
+##Density##fibres
+##Length##fibres
+##Length spread
+##Thickness##fibres
+##Taper##fibres
+##Lift
+##Direction Var.##fibres
+##Rate
+##Size##islands
+##Strength##islands
+##Matted
+##Fluffy
+##Thin
+##Density Var.
+##Density Var. Scale
+##Patch length
+##Patch lift
+##Clump size
+##Clump strength
+##Wear
+Colour from the object
+One colour
+Colour from the texture
+##Roughness along
+##Roughness around
+##Index of refraction
+##Colour by
+Advanced
+Seed
+-
++
+Segment budget
+Workflow/##fibreStatus_E37A042A
+Grow fur
+##viewToolbar
+Discs
+Reference sphere
+Model
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+### wool-swatch-blue / fur workflow / Export
+Knit viewer Import Ready 1  Fur Not grown 2  Export Needs fur
+Export settings
+Blue wool swatch on a needle (12 cm) · format, contents and destination
+Made from "Wool swatch on a needle" by Nicolas Menzel, CC BY-NC 4.0. Exports name it in CREDITS.txt.
+--- File format
+{ Photon Path Tracer package }
+The mesh with its fur, and report.json.
+> What the package holds
+    scene.json with materials, a camera, a grey ground plane and a uniform sky; yarn tubes and an import's unknitted parts as PLY meshes (with their base colour texture); fibres as .pptstrands; ply shading maps (normal, height); report.json with the settings and every part's verdict.
+    With knitting skipped: the mesh, with its base colour texture, instead of the yarn tubes.
+--- Contents
+The mesh and the fur grown in the Fur step.
+The Fur workflow knits nothing: no yarn tubes or ply maps are written.
+| Body colour (?) | { Texture } |
+Colour source of the surface under the fur.
+--- Destination
+Output folder [ Choose folder ... ]
+<src>\out\exports\wool-swatch-blue_fur
+> Existing files
+    The export writes directly into this folder, and creates it if it is missing. Files of the same name are replaced; nothing else in the folder is touched. A cancelled or failed export changes nothing.
+--------------------------------
+Fur required
+There is no fur yet.
+[ Grow fur ]
+[ Source ] [ Knit ] [ Fibres ]
+[ Front ] [ Fit ] [ Display ]
+Shown: 0 triangles
+Blue wool swatch on a needle (12 cm) No fur yet: Grow fur grows it on the mesh
+Idle GPU: NVIDIA GeForce RTX 4070 SUPER [ Report ] [ Log ] [ Preview ] [ Interface ] [ About ]
+--- widgets
+Debug##Default
+##workflowStrip
+##stage
+##stage
+##stage
+Workflow
+Workflow/##stagePanel_77CD0CE2
+##Format
+What the package holds
+##Body colour
+Choose folder ...
+Existing files
+Workflow/##exportStatus_C86FE14A
+Grow fur
+##viewToolbar
+Source  [disabled]
+Knit  [disabled]
+Fibres  [disabled]
+Front###viewMenu
+Fit
+Display###displayMenu
+##viewCounts
+##viewStatus
+##status
+Report
+Log
+Preview
+Interface
+About
+--- Display popover
+##Popup_912c21a7
+Studio  [disabled]
+Flat
+Occlusion  [disabled]
+Wireframe
+Compare with source  [disabled]

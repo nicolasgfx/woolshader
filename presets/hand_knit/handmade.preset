@@ -1,0 +1,18 @@
+knit-preset v1
+# Hand-knit preset "Hand-made" (knit_viewer: step 1 Knit, Hand-made look).
+#
+# How unevenly the stitches are knitted. Edit the values and restart the viewer; copy the file (new
+# name and id) to add a preset. The lowest `order` comes first in the list.
+id = handmade
+label = Hand-made
+order = 3
+note = An ordinary hand knit: columns out of line, some loops standing out.
+knit.hand.unevenness = 20
+knit.hand.column_shift = 0.6
+knit.hand.column_rows = 6
+knit.hand.loop_rate = 0.3
+knit.hand.loop_height = 0.8
+knit.hand.wave_height = 0.25
+knit.hand.spot_rate = 0.4
+knit.hand.spot_change = 25
+knit.hand.spot_length = 14

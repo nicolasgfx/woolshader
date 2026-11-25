@@ -1,0 +1,15 @@
+knit-preset v1
+# Fibre island preset "Natural" (knit_viewer: step 2 Fibres, Fibre islands).
+#
+# Patches where the fuzz differs from the even fuzz around them. Edit the values and restart the
+# viewer; copy the file (new name and id) to add a preset. The lowest `order` comes first in the list.
+id = natural
+label = Natural
+order = 2
+note = New wool: a few faint, mostly fuzzy patches.
+fibres.islands.rate = 0.06
+fibres.islands.size = 10
+fibres.islands.strength = 40
+fibres.islands.fuzzy = 2
+fibres.islands.matted = 1
+fibres.islands.worn = 1

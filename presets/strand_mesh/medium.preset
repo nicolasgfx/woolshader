@@ -1,0 +1,18 @@
+knit-preset v1
+# Yarn tessellation level "Medium" (knit_viewer: step 1 Knit, Build settings, "Yarn tessellation").
+#
+# The yarn's polygon tube, drawn by the viewer and written by the export; fibre roots are placed in
+# it. Edit the values and restart the viewer; copy the file (new name and id) to add a level. The
+# lowest `order` comes first in the list. Bounds: 3..64 sides, 0.05..2 mm ring spacing.
+#   strand.tube_sides / strand.tube_ring [mm]          the single yarn tube
+#   strand.ply_tube_sides / strand.ply_tube_ring [mm]  each ply (explicit plies only)
+# Export step: level "Full". New objects use Reduced (the settings' default, 6 / 0.6 / 4 / 0.45).
+id = medium
+label = Medium
+order = 3
+note = 8 sides, a ring every 0.4 mm.
+
+strand.tube_sides = 8
+strand.tube_ring = 0.4
+strand.ply_tube_sides = 6
+strand.ply_tube_ring = 0.3

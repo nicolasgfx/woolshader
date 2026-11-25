@@ -1,0 +1,15 @@
+knit-preset v1
+# Fibre island preset "Well-loved" (knit_viewer: step 2 Fibres, Fibre islands).
+#
+# Patches where the fuzz differs from the even fuzz around them. Edit the values and restart the
+# viewer; copy the file (new name and id) to add a preset. The lowest `order` comes first in the list.
+id = well_loved
+label = Well-loved
+order = 4
+note = Much handled: large patches, some worn thin.
+fibres.islands.rate = 0.3
+fibres.islands.size = 18
+fibres.islands.strength = 100
+fibres.islands.fuzzy = 1
+fibres.islands.matted = 1
+fibres.islands.worn = 2

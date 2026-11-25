@@ -1,0 +1,27 @@
+{
+  "what": "The stitch-mesh experiment's settle settings, frozen 2026-11-19 before its measured yarn-settle runs (the numbers and rules guided_settle_defaults_frozen compares with the code's defaults).",
+  "frozen": "2026-11-19",
+  "conversion": {
+    "representation": "per open strand, one uniform cubic B-spline interpolating equal-arc points of the dense Hermite strand (natural ends); each piece keeps its parameter interval",
+    "dense_points_per_hermite_span": 32,
+    "spacing_mm": 0.2
+  },
+  "solve": {
+    "target_diameter_mm": 1.16,
+    "clearance_mm": 0.1,
+    "soft_contact_margin_mm": 0.05,
+    "soft_bend_factor": 1.15,
+    "length_stiffness": 0.3,
+    "band_half_mm": 2.0,
+    "samples_per_span": 4,
+    "iterations": 120,
+    "refresh": 10,
+    "values_from": "production SettleParams / RepairParams / PatternParams defaults (settle.h, params.h); hard thresholds and margins are the solver's own (knit_numerics.cpp)",
+    "radius_continuation": "start diameter D0 by certifiedRepair's rule from the certified checks of the converted curves; stages D_k = D0 (D / D0)^(k / K), K = ceil(log(D / D0) / log 1.6), from max(D0, 0.05 mm); then 6 calls at D",
+    "per_call": "hard contact D_k + c (+ 0.03), hard curvature 1 / (r_k + c / 2) / 1.03, soft targets as settle's, displacement cap 0.5 (D_{k-1} + c); first 3 and last 3 controls pinned (the two declared yarn ends)",
+    "max_repeats_at_target": 60,
+    "stall_calls": 4,
+    "budget": "at most 900 LM steps and 40 outer iterations per call (the solver's own limits); no call starts after 50 min of solve time (the one-hour cap of every run)",
+    "stop_rule": "calls at the target end at the first one whose gate is valid and whose construction is kept; a valid gate on a changed construction ends the run as lost; 4 target calls in a row with neither fewer open regions nor a smaller shortfall end it as stalled; at most 60 target calls, the 50 min budget before that on large pieces"
+  }
+}

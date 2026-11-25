@@ -1,0 +1,91 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+*.so.*
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build directories
+build/
+Build/
+build-*/
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+install_manifest.txt
+compile_commands.json
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+*.swp
+
+# vcpkg
+vcpkg_installed/
+
+# debug information files
+*.dwo
+
+# test output & cache
+Testing/
+.cache/
+
+# viewer / IDE
+imgui.ini
+*.user
+.vs/
+
+!tests/data/*.obj
+!tests/data/wrap_golden/**/*.obj
+build_dev/
+# Generated data, never committed: caches (out/cache: scenes, knits, ply maps, imports),
+# the viewer's example exports (out/exports) and exported scenes.
+out/
+
+# Scene assets are not committed, except the wool swatch: other models keep their own licences. Notes on
+# the scenes (*.md) are kept.
+scenes/*
+!scenes/*.md
+# The wool swatch is the author's own model and ships with the source (scenes/wool-swatch/LICENSE.md).
+!scenes/wool-swatch/
+
+# Python bytecode
+__pycache__/
+*.pyc

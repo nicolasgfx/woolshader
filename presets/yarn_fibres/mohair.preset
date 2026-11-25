@@ -1,0 +1,37 @@
+knit-preset v1
+# Yarn fibre look "Mohair" (knit_viewer: step 2 Fibres, Yarn fibres, Look; the yarn is made of fibres by the Knit step's Construction).
+#
+# What the yarn's fibres are and how they shade, for both renderings (the real fibres, and the maps baked
+# from them). Edit the values and restart the viewer; copy the file (new name and id) to add a look. The lowest
+# `order` is the default. The interior fibres, the core proxy, the fibre seed, the maps' texel and the rendering
+# stay yours.
+#
+#   plies, fibres, fibre_diameter_um, shell_depth, fibre_angle_deg, ply_angle_deg, irregularity
+#                   the body's structure (yarn_body.*, fibres/yarn_body.h); irregularity 0..2 sets the crimp,
+#                   the migration spread and the radius noise
+#   map_cavity      the maps' albedo darkening by the baked ambient occlusion (0..1)
+#   map_roughness   the smooth fibre's roughness floor under the baked normal spread (0.01..1)
+#   map_specular    the highlight's strength (0..1; 0.35 is a fibre of refractive index 1.4)
+#   map_anisotropy  the highlight's roughness along the yarn over across it (0.05..1)
+#   map_material    the maps' material: fabric (matte with a sheen; lets the wool profile's translucency
+#                   through) or shiny (the highlight of map_roughness, map_specular and map_anisotropy; opaque)
+#   material.yarn_white.fibre_*  the real fibres' hair shading: roughness along and around, refractive index
+id = mohair
+label = Mohair
+order = 3
+note = Fine, lustrous, loosely twisted fibres in a deep, airy shell; a fabric map that lets the wool profile's translucency through (pair it with the Mohair wool profile).
+yarn_body.plies = 3
+yarn_body.fibres = 500
+yarn_body.fibre_diameter_um = 25
+yarn_body.shell_depth = 0.8
+yarn_body.fibre_angle_deg = 15
+yarn_body.ply_angle_deg = 12
+yarn_body.irregularity = 1.5
+yarn_body.map_cavity = 0.3
+yarn_body.map_roughness = 0.3
+yarn_body.map_specular = 0.4
+yarn_body.map_anisotropy = 0.4
+yarn_body.map_material = fabric
+material.yarn_white.fibre_longitudinal_roughness = 0.25
+material.yarn_white.fibre_azimuthal_roughness = 0.6
+material.yarn_white.fibre_ior = 1.55
