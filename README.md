@@ -14,7 +14,7 @@ Rendering wool is tricky: its complex structure has to be modelled, and the way 
 - **Rendering:** wool fibres are dielectric. Light reflects off a fibre or enters it, where it is absorbed or reflected internally before leaving again. Fibre thickness, tapering and absorption decide how plausible the result looks.
 - **GPU memory:** tens of millions of fibre segments fill much of a consumer GPU's memory. Baking the yarn's fibre detail into texture maps and keeping only the loose fuzz as geometry reduces that cost.
 
-The full write-up is the [article](https://nicolasgfx.github.io/woolshader/). More renders are in my [rendering portfolio](https://github.com/nicolasgfx/Portfolio).
+Read the [full article](https://nicolasgfx.github.io/woolshader/), including [the render that inspired the project](https://nicolasgfx.github.io/woolshader/#introduction). More renders are in my [rendering portfolio](https://github.com/nicolasgfx/Portfolio).
 
 ## What this delivers
 
