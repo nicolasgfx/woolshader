@@ -126,6 +126,9 @@ article .release-links a:hover { background: var(--selection); color: var(--acce
 .article-figure figcaption::before { content: 'Figure ' attr(data-paper-number) '. '; color: var(--ink); font-weight: 700; }
 /* One image: as wide as the column allows without growing taller than --fig-max-h. */
 .article-figure--single { width: min(100%, calc(var(--fig-max-h) * var(--aspect, 1.6))); }
+/* A deliberately small image: the figure keeps the column width for its caption. */
+.article-figure--single.article-figure--small { width: 100%; }
+.article-figure--small > a { display: block; width: max(var(--image-share), 120px); margin: 0 auto; }
 /* A credit line joined to a caption. */
 .figure-credit { display: block; padding-top: 3px; font-size: 12px; color: var(--muted); }
 /* Subfigures: a leading comparison strip across the full width, then rows of equal height. */
@@ -165,6 +168,8 @@ article .release-links a:hover { background: var(--selection); color: var(--acce
 .tour .article-figure { margin: 18px 0 0; }
 .article-figure--slides .subfig-row { flex-direction: column; gap: 18px; }
 .article-figure--slides .subfig-row > .subfig { flex: none; width: 100%; }
+/* A slideshow holding a deliberately small image: its slides keep that image's share of the column. */
+.article-figure--small-slides .subfig-row { width: max(var(--image-share), 120px); margin-inline: auto; }
 /* With JavaScript the screenshots become a slideshow (article.js); print shows them all. */
 .is-slideshow .subfig-row > .subfig[hidden] { display: none; }
 .is-slideshow .caption-part:not(.is-current) { display: none; }
