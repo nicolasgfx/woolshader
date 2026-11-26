@@ -13,6 +13,7 @@ function showImage(index) {
   shown = (index + figureLinks.length) % figureLinks.length;
   const link = figureLinks[shown];
   const image = link.querySelector('img');
+  dialog.classList.toggle('image-dialog--compact', link.hasAttribute('data-compact-enlarge'));
   dialogImage.src = link.href;
   dialogImage.alt = image.alt;
   dialogCaption.textContent = link.dataset.caption || image.alt;

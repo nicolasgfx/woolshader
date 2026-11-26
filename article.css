@@ -8,6 +8,8 @@
   --sans: 'Segoe UI', Arial, sans-serif; --mono: Consolas, 'Cascadia Mono', monospace;
   --measure: 740px;              /* the one column */
   --sheet: 860px;                /* column + side margins of the sheet */
+  --sheet-gutter: 32px;
+  --sheet-padding: 60px;
   --fig-max-h: min(80vh, 720px); /* single figures never get taller than this */
 }
 
@@ -28,7 +30,7 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .reading-progress { position: fixed; top: 0; left: 0; height: 3px; width: 100%; transform: scaleX(0); transform-origin: left; background: var(--accent); z-index: 80; }
 
 /* The sheet */
-.page-shell { max-width: var(--sheet); width: calc(100% - 64px); margin: 30px auto; padding: 0 60px; background: var(--paper); box-shadow: 0 2px 18px #0000000c; }
+.page-shell { max-width: var(--sheet); width: calc(100% - 2 * var(--sheet-gutter)); margin: 30px auto; padding: 0 var(--sheet-padding); background: var(--paper); box-shadow: 0 2px 18px #0000000c; }
 .site-header { display: flex; align-items: center; gap: 20px; min-height: 74px; border-bottom: 1px solid var(--line); font: 11px/1.4 var(--sans); }
 .wordmark, .source-link { text-decoration: none; white-space: nowrap; }
 .wordmark { display: flex; align-items: center; gap: 10px; font-weight: 650; }
@@ -225,6 +227,7 @@ details.settings p em { font-style: italic; }
 
 /* Enlargement dialog */
 .image-dialog { position: fixed; inset: 0; width: min(1600px, 96vw); max-width: 96vw; max-height: 96dvh; border: 1px solid #666; background: #121514; color: #fff; padding: 52px 18px 14px; }
+.image-dialog--compact { width: calc(.75 * min(var(--measure), 100% - 2 * (var(--sheet-gutter) + var(--sheet-padding)))); }
 .image-dialog::backdrop { background: #080b0ce8; backdrop-filter: blur(6px); }
 .image-dialog img { width: 100%; height: auto; max-height: 80dvh; object-fit: contain; }
 .close-image { position: absolute; right: 18px; top: 12px; color: #fff; background: none; border: 1px solid #777; padding: 5px 12px; font-size: 12px; }
@@ -238,11 +241,13 @@ body:has(.image-dialog[open]) { overflow: hidden; }
 
 /* Narrow screens */
 @media (max-width: 840px) {
-  .page-shell { width: calc(100% - 30px); padding-inline: 30px; margin-block: 15px; }
+  :root { --sheet-gutter: 15px; --sheet-padding: 30px; }
+  .page-shell { margin-block: 15px; }
   .paper-heading h1 { font-size: 35px; }
 }
 @media (max-width: 600px) {
-  .page-shell { width: 100%; margin: 0; padding-inline: 16px; box-shadow: none; }
+  :root { --sheet-gutter: 0px; --sheet-padding: 16px; }
+  .page-shell { margin: 0; box-shadow: none; }
   .site-header { min-height: 60px; gap: 12px; flex-wrap: wrap; }
   .paper-heading { padding-block: 30px 24px; }
   .paper-heading h1 { font-size: 29px; }
